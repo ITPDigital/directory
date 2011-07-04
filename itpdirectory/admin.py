@@ -37,7 +37,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link'  )
+    list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
     list_filter = ( 'main_industry',  'city', )
     inlines = ( ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
 

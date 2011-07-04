@@ -74,6 +74,20 @@ class Company(models.Model):
     person_link.allow_tags = True
     person_link.short_description = "Key Person" 
 
+    def persons(self):
+        people = self.person_set.all()
+        string = ""
+        for person in people:
+            single = '<a href="%s"> %s </a> <br/>' % ( reverse("admin:itpdirectory_person_change", args=( person.id, ) ) , person  )
+            string = "%s %s" % ( string, single ) 
+
+        return string
+
+    persons.allow_tags = True
+    persons.short_description = "Existing Key Person" 
+
+
+
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
