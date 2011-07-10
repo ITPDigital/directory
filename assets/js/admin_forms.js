@@ -24,7 +24,19 @@ function getParameterByName(name)
     var company = getParameterByName("company");
     if( company != "" ){
         $("#id_manycompanyperson_set-0-company").val( company ) ;
-    } 
+    }
+    console.log("doc ready");
+    console.log( $("#manydirectorycompany_set-group") ); 
+    console.log( $("#id_child-0-parent") );
+
+    var add_row = $("#manydirectorycompany_set-group .add-row a")[0];
+
+    console.log(add_row);
+
+     $("#manydirectorycompany_set-group a").bind("click", function() { 
+        console.log( "addd" );  
+      } );
+
 
   
  });
@@ -51,6 +63,37 @@ function fill_specific_industry( provider_id, field ){
         });
 
 }
+
+
+function increment_form_ids(el, to) {
+    var from = to-1;
+    $(':input', $(el)).each(function(i,e){
+          var old_name = $(e).attr('name')
+          var old_id = $(e).attr('id')
+          $(e).attr('name', old_name.replace(from, to))
+          $(e).attr('id', old_id.replace(from, to))
+          $(e).val('')
+    })
+}
+ 
+function add_inline_button() {
+    $(".inline-group .add-row a").bind("click", function(e) {
+    console.log( "addd" );
+        var rows = $(this).parents("div.inline-group").find("tr");
+        var last = $(rows[rows.length-1]);
+        var copy = last.clone(true);
+        if (last.hasClass("row1")) {
+            copy.attr("class", "row2");
+        } else {
+            copy.attr("class", "row1");
+        }
+        last.after(copy);
+        $($(this).parents("div.inline-group").find("input")[0]).val(rows.length);
+        increment_form_ids(copy, rows.length-1);
+        return false;
+    });
+}
+
 
 
 

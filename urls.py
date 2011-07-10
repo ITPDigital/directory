@@ -22,5 +22,6 @@ urlpatterns = patterns('',
 
     #ajax stuff
     (r'^ajax/client/industry$', 'itpdirectory.views.industry_ajax_servant'),
+    (r'^ajax/client/category$', 'itpdirectory.views.category_ajax_servant'),
 
 )

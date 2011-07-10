@@ -1,5 +1,6 @@
 from django.db import models
-from itpdirectory import COMPANY_PERSON_RELATION, CATEGORY_PERSON_RELATION, COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, NATIONALITY, PERSON_JOB_FUNCTION
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS
+from itputils import COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 
@@ -45,24 +46,28 @@ class Brand(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
-    pobox = models.CharField(max_length=5)
+    pobox = models.CharField(max_length=10)
     address = models.CharField(max_length=255)
     address_2 = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
+    country = models.CharField( choices=COUNTRIES, max_length=5 )
+    city = models.IntegerField( choices=CITIES, default=1 )
     area = models.CharField(max_length=255)
-    country = models.IntegerField( choices=NATIONALITY, default=1 )
-    zip_code =  models.CharField(max_length=5)
+    zip_code =  models.CharField(max_length=5, blank=True, null=True)
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
     phone = models.CharField(max_length=255) 
     fax = models.CharField(max_length=255) 
-    
-    #category = models.ForeignKey( Category )
+    email = models.EmailField()
+    url = models.URLField( verify_exists=True, blank=True, null=True )
+    facebook = models.CharField( max_length=255, blank=True, null=True )
+    twitter = models.CharField(max_length=255, blank=True, null=True )
+
+    status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+    is_active = models.BooleanField()
+   
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )
-    
     company = models.ManyToManyField( "self" , null=True, blank=True, through="ManyCompanyCompany", symmetrical=False, related_name='related_company' )
     brand = models.ManyToManyField( Brand, null=True, blank=True ) #, through="ManyBrandCompany" )
-    year = models.ManyToManyField( Year ) 
 
     def __unicode__(self):
         return self.name
@@ -91,7 +96,7 @@ class Company(models.Model):
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    nationality = models.IntegerField( choices=NATIONALITY, default=1 )
+    nationality = models.IntegerField( choices=COUNTRIES, default=1 )
     email = models.EmailField(max_length=75 )
     job_title = models.CharField(max_length=255)
     job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, default=1 )
@@ -117,9 +122,11 @@ class ManyCompanyPerson(models.Model):
 
 
 class ManyDirectoryCompany(models.Model):
-    directory = models.ForeignKey(Directory)
     company = models.ForeignKey( Company )
-    category = models.ForeignKey( Category )
+    year = models.ForeignKey( Year ) 
+    directory = models.ForeignKey(Directory)
+    category = models.ForeignKey( Category, related_name="directory_company_category" )
+    subcategory = models.ForeignKey( Category, related_name="directory_company_sub_category" )
 
 #class ManyCompanyCategory(models.Model):
 #    company = models.ForeignKey( Company )
