@@ -3,6 +3,9 @@ from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRA
 from itputils import COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.core.mail import mail_managers
+
+from django.conf import settings
 
 class Year(models.Model):
     name = models.CharField(max_length=255)
@@ -90,6 +93,17 @@ class Company(models.Model):
 
     persons.allow_tags = True
     persons.short_description = "Existing Key Person" 
+
+    def save(self, *args, **kwargs):
+        email = True if not self.id else False
+
+        super(Company, self).save(*args, **kwargs)
+
+        if email:
+            fail_silently = True if settings.DEBUG else False
+            message = "Hey Ya ! A new company got added, check it out. ID is: %d" % self.id
+            subject ="ITP Directory :: New company got added"
+            mail_managers(subject, message, fail_silently )
 
 
 

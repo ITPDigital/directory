@@ -5,3 +5,13 @@
 
 {% endblock %}
 
+      {% block result_list %}
+
+        {{ block.super }}
+
+
+        {% if not cl.result_count %}
+            <br/> &nbsp;&nbsp; <a href="/admin/itpdirectory/company/add/?pass={{ add_stamp }}"> No results found  - Add a company </a> <br/><br/>
+        {% endif %}
+
+      {% endblock %}
