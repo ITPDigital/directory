@@ -35,7 +35,7 @@ class Directory(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    directory = models.ManyToManyField( Directory )
+    directory = models.ForeignKey( Directory )
     category = models.ForeignKey("self", blank=True, null=True, related_name="child_category")
     
     def __unicode__(self):

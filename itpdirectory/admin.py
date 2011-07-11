@@ -85,7 +85,7 @@ class DirectoryAdmin( admin.ModelAdmin ):
 
 class CategoryAdmin( admin.ModelAdmin):
     list_display = ( 'name', 'category', )
-    list_filter = ( 'category', 'directory' )
+    list_filter = (  'directory', )
 
 admin.site.register( Year )
 admin.site.register( Directory, DirectoryAdmin )
