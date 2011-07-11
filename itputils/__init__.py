@@ -1,5 +1,13 @@
 
 COUNTRIES=(
+    ('Popular', (
+        (u"SA",u"Saudi Arabia"),
+        (u"AE",u"United Arab Emirates"),
+        (u"OM",u"Oman"),
+        (u"KW",u"Kuwait"),
+        (u"BH",u"Bahrain"),
+      )
+    ),
     (u"US",u"United States"),
     (u"CA",u"Canada"),
     (u"AF",u"Afghanistan"),
@@ -18,7 +26,6 @@ COUNTRIES=(
     (u"AT",u"Austria"),
     (u"AZ",u"Azerbaijan"),
     (u"BS",u"Bahamas"),
-    (u"BH",u"Bahrain"),
     (u"BD",u"Bangladesh"),
     (u"BB",u"Barbados"),
     (u"BY",u"Belarus"),
@@ -113,7 +120,6 @@ COUNTRIES=(
     (u"KI",u"Kiribati"),
     (u"KP",u"Korea, Democratic People's Republic of"),
     (u"KR",u"Korea, Republic of"),
-    (u"KW",u"Kuwait"),
     (u"KG",u"Kyrgyzstan"),
     (u"LA",u"Lao People's Democratic Republic"),
     (u"LV",u"Latvia"),
@@ -160,7 +166,6 @@ COUNTRIES=(
     (u"NF",u"Norfork Island"),
     (u"MP",u"Northern Mariana Islands"),
     (u"NO",u"Norway"),
-    (u"OM",u"Oman"),
     (u"PK",u"Pakistan"),
     (u"PW",u"Palau"),
     (u"PA",u"Panama"),
@@ -183,7 +188,6 @@ COUNTRIES=(
     (u"WS",u"Samoa"),
     (u"SM",u"San Marino"),
     (u"ST",u"Sao Tome and Principe"),
-    (u"SA",u"Saudi Arabia"),
     (u"SN",u"Senegal"),
     (u"SC",u"Seychelles"),
     (u"SL",u"Sierra Leone"),
@@ -220,7 +224,6 @@ COUNTRIES=(
     (u"TV",u"Tuvalu"),
     (u"UG",u"Uganda"),
     (u"UA",u"Ukraine"),
-    (u"AE",u"United Arab Emirates"),
     (u"GB",u"United Kingdom"),
     (u"UM",u"United States minor outlying islands"),
     (u"UY",u"Uruguay"),
