@@ -39,7 +39,7 @@ function tie_many_to_many_event(){
                 }
 
             });
-            if ( fields[j] != "year") bind_to.empty();
+            //if ( fields[j] != "year") bind_to.empty();
 
         }
 

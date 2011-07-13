@@ -53,7 +53,7 @@ class Company(models.Model):
     address = models.CharField(max_length=255)
     address_2 = models.CharField(max_length=255)
     country = models.CharField( choices=COUNTRIES, max_length=5 )
-    city = models.IntegerField( choices=CITIES, default=1 )
+    city = models.CharField( max_length=255 )
     area = models.CharField(max_length=255)
     zip_code =  models.CharField(max_length=5, blank=True, null=True)
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
