@@ -30,6 +30,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
     list_filter = ( 'job_function', 'job_title' )
     inlines = ( ManyCompanyPersonInline,  )
+    search_fields = ('first_name','last_name', )
 
     class Media:
         js = ( 
