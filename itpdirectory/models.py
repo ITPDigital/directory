@@ -110,7 +110,7 @@ class Company(models.Model):
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    nationality = models.IntegerField( choices=COUNTRIES, default=1 )
+    nationality = models.CharField( choices=COUNTRIES, max_length=5 )
     email = models.EmailField(max_length=75 )
     job_title = models.CharField(max_length=255)
     job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, default=1 )
