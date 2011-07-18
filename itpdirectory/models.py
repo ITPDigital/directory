@@ -130,6 +130,7 @@ class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
     person = models.ForeignKey( Person )
     relation = models.IntegerField( choices=COMPANY_PERSON_RELATION, default=1 )
+    directory = models.ManyToManyField( Directory  ) 
 
     def __unicode__(self):
         return mark_safe( "%s - %s" % ( self.company, self.person )  )
