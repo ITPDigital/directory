@@ -1,0 +1,18 @@
+{% load i18n %}
+<input type="text" id="lookup_{{ name }}" value="{{ label }}" style="width:300px" />
+<a href="{{ related_url }}{{ url }}" class="related-lookup" id="lookup_id_{{ name }}" onclick="return showRelatedObjectLookupPopup(this);">
+  <img src="{{ admin_media_prefix }}img/admin/selector-search.gif" width="16" height="16" alt="{% trans "Lookup" %}" />
+</a>
+{% if "__prefix__" in name %}
+<script type="text/javascript">
+{{ model_name }}_search_fields = '{{ search_fields }}';
+{{ model_name }}_app_label = '{{ app_label }}';
+{{ model_name }}_model_name = '{{ model_name }}';
+{{ model_name }}_preview = 'False';
+
+related_from_search_fields = '{{ search_fields }}';
+related_from_app_label = '{{ app_label }}';
+related_from_model_name = '{{ model_name }}';
+related_from_preview = 'False';
+</script>
+{% endif %}
