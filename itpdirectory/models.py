@@ -10,6 +10,9 @@ from django.conf import settings
 class Year(models.Model):
     name = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
 
@@ -20,6 +23,7 @@ class Magazine(models.Model):
     def __unicode__(self):
         return self.name
 
+    
 class Directory(models.Model):
     name = models.CharField(max_length=255)
     year = models.ManyToManyField( Year ) 
@@ -28,9 +32,12 @@ class Directory(models.Model):
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
     magazine = models.ForeignKey(Magazine)
 
+    class Meta:
+        verbose_name_plural = "Directories"
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
-
 
 
 class Category(models.Model):
@@ -38,8 +45,13 @@ class Category(models.Model):
     directory = models.ForeignKey( Directory )
     category = models.ForeignKey("self", blank=True, null=True, related_name="child_category")
     
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
+
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
@@ -72,9 +84,17 @@ class Company(models.Model):
     company = models.ManyToManyField( "self" , null=True, blank=True, through="ManyCompanyCompany", symmetrical=False, related_name='related_company' )
     brand = models.ManyToManyField( Brand, null=True, blank=True ) #, through="ManyBrandCompany" )
 
+    class Meta:
+        verbose_name_plural = "Companies"
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
 
+    def get_thumbnail(self):
+        return None
+        # i needs a logo
+        #return self.image.url
 
     def person_link(self):
         return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_person_add" ) , self.id  )
@@ -106,7 +126,6 @@ class Company(models.Model):
             mail_managers(subject, message, fail_silently )
 
 
-
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -115,16 +134,17 @@ class Person(models.Model):
     job_title = models.CharField(max_length=255)
     job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, default=1 )
     company = models.ManyToManyField( Company, through='ManyCompanyPerson')
-    year = models.ManyToManyField( Year ) 
+    year = models.ManyToManyField( Year )
+
+    #bio, user, author
+
+    class Meta:
+        verbose_name_plural = "People"
+        ordering = ['first_name', 'last_name']
 
     def __unicode__(self):
         return "%s %s" % ( self.first_name , self.last_name )
 
-
-#MANY TO MANY RELATIONS
-#class ManyDirectoryCategory(models.Model):
-#    directory = models.ForeignKey(Directory)
-#    category = models.ForeignKey(Category)
 
 class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
@@ -142,24 +162,18 @@ class ManyDirectoryCompany(models.Model):
     category = models.ForeignKey( Category, related_name="directory_company_category" )
     subcategory = models.ForeignKey( Category, related_name="directory_company_sub_category" )
 
-#class ManyCompanyCategory(models.Model):
-#    company = models.ForeignKey( Company )
-#    category = models.ForeignKey(Category)
-    
-#class ManyCategoryPerson(models.Model):
-#    category = models.ForeignKey(Category)
-#    person = models.ForeignKey( Person )
-#    relation = models.IntegerField( choices=CATEGORY_PERSON_RELATION, default=1 )
-    
+    class Meta:
+        verbose_name_plural = "Directories"
+
 
 class ManyCompanyCompany(models.Model):
-    child = models.ForeignKey( Company, null=True, blank=True, related_name='child' )
-    parent = models.ForeignKey( Company, null=True, blank=True, related_name='parent' )
+    company = models.ForeignKey( Company, null=True, blank=True, related_name='related_from' )
+    related_to = models.ForeignKey( Company, null=True, blank=True, related_name='related_to' )
     relation = models.IntegerField( choices=COMPANY_COMPANY_RELATION, default=1 )
-    
-#class ManyBrandCompany(models.Model):
-#    brand = models.ForeignKey( Brand )
-#    company = models.ForeignKey( Company )
-#    relation = models.IntegerField( choices=BRAND_COMPANY_RELATION, default=1 )
+
+    class Meta:
+        verbose_name_plural = "Company Relations"
+        unique_together = ('company', 'related_to',)
+
 
     

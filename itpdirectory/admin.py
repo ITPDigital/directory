@@ -6,25 +6,26 @@ from django.core.urlresolvers import reverse
 from django.utils.functional import curry
 from datetime import datetime
 
+from itputils.autocomplete_admin import FkAutocompleteAdmin, InlineAutocompleteAdmin
+
 
 class ManyDirectoryCompanyInline(admin.TabularInline):
     model = ManyDirectoryCompany
     extra = 1
+
 
 class ManyCompanyPersonInline(admin.TabularInline):
     model =  ManyCompanyPerson
     extra = 1    
 
 
-
-class ManyCompanyCompanyInline(admin.TabularInline):
+class ManyCompanyCompanyInline(InlineAutocompleteAdmin):
     model =  ManyCompanyCompany
-    fk_name = 'child' 
-    extra = 1    
+    fk_name = 'company'
+    extra = 1
+    related_search_fields = {  'related_to': ('name',), }
+    template = "admin/itpdirectory/company/tabular.html"
 
-#class ManyBrandCompanyInline(admin.TabularInline):
-#    model = ManyBrandCompany
-#    extra = 1
 
 class PersonAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
@@ -37,10 +38,13 @@ class PersonAdmin(admin.ModelAdmin):
               )
 
 
-class CompanyAdmin(admin.ModelAdmin):
+class CompanyAdmin(FkAutocompleteAdmin):
     list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
     list_filter = ( 'status', 'is_active', 'main_industry',  'city', )
-    inlines = ( ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
+    inlines = [
+        #ManyDirectoryCompanyInline,
+        ManyCompanyCompanyInline,
+    ]
     search_fields = ('name',)
 
     def add_view(self, request, extra_context=None):
@@ -70,7 +74,12 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
     class Media:
-        js = ( 
+        css = {
+			'all': (settings.MEDIA_URL + "css/jquery-ui-1.8.14.custom.css",)
+		}
+        js = (
+              settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
+              settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
               settings.MEDIA_URL + "js/admin_forms.js", 
               )
 

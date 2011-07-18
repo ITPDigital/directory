@@ -69,9 +69,7 @@
 
 <script type="text/javascript">
 
-function tie_many_to_many_event()
-{
-
+function tie_many_to_many_event() {
     var url = "/ajax/client/company_directory_many";
     var prefix = "manydirectorycompany_set-";
     var i = 0;
@@ -83,11 +81,11 @@ function tie_many_to_many_event()
         if ( $("#id_"+prefix+i+"-"+field ).attr("id") === undefined   ){
             break;
         }
-        
+
         for ( var j=0; j < fields.length; j++){
             bind_to = $("#id_"+prefix+i+"-"+fields[j]);
             bind_to.bind("change",function(event){
-                
+
                 var name = this.name.split("-")[2] ;
                 var num = this.name.split("-")[1] ;
                 switch ( name ){
@@ -98,19 +96,12 @@ function tie_many_to_many_event()
 
             });
             //if ( fields[j] != "year") bind_to.empty();
-
         }
-
-
         i= i+1;
     }
-
-
 }
 
-
-function inspect(obj, maxLevels, level)
-{
+function inspect(obj, maxLevels, level) {
   var str = '', type, msg;
 
     // Start Input Validations
@@ -119,7 +110,7 @@ function inspect(obj, maxLevels, level)
 
     // At least you want to show the first level
     if(maxLevels == null) maxLevels = 1;
-    if(maxLevels < 1)     
+    if(maxLevels < 1)
         return '<font color="red">Error: Levels number must be > 0</font>';
 
     // We start with a non null object
@@ -137,7 +128,7 @@ function inspect(obj, maxLevels, level)
       {
           // Show "property" and "type property"
           type =  typeof(obj[property]);
-          str += '<li>(' + type + ') ' + property + 
+          str += '<li>(' + type + ') ' + property +
                  ( (obj[property]==null)?(': <b>null</b>'):('')) + '</li>';
 
           // We keep iterating if this property is an Object, non null
@@ -156,14 +147,10 @@ function inspect(obj, maxLevels, level)
         str += '<li><font color="red">(Error) ' + property + ': ' + msg +'</font></li>';
       }
     }
-
-      // Close indent
-      str += '</ul>';
-
+    // Close indent
+    str += '</ul>';
     return str;
 }
-
-
 
 (function($) {
     $(document).ready(function($) {
@@ -171,6 +158,128 @@ function inspect(obj, maxLevels, level)
         tie_many_to_many_event();
 
         var rows = "#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr";
+
+        // Return a helper with preserved width of cells
+        var fixHelper = function(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        };
+        // Set this to the name of the column holding the position
+        pos_field = 'order';
+
+        // Determine the column number of the position field
+        pos_col = null;
+
+        cols = $(rows).parent().children('tr:first').children();
+        for (i = 0; i < cols.length; i++) {
+            inputs = $(cols[i]).find('input[name*=' + pos_field + ']');
+
+            if (inputs.length > 0) {
+                // Found!
+                pos_col = i;
+                break;
+            }
+        }
+
+        //if (pos_col == null) {
+        //    return;
+        //}
+        if(pos_col != null) {
+            var setOrdering = function(e, ui) {
+                item = ui.item;
+                items = $(this).find('tr').get();
+
+                $(items).each(function(index) {
+                    order_td = $(this).children()[pos_col];
+                    input = $(order_td).children('input').first();
+
+                    input.attr('value', (index + 1));
+                });
+
+                // Update row classes
+                $(this).find('tr').removeClass('row1').removeClass('row2');
+                $(this).find('tr:even').addClass('row1');
+                $(this).find('tr:odd').addClass('row2');
+
+                return ui;
+            };
+        }
+
+        var setSortable = function(row) {
+            jQuery(rows).parent().sortable({
+                helper: fixHelper,
+                items: "tr:not(.add-row, .empty-form)",
+                create: setOrdering,
+                update: setOrdering,
+                revert: 200,
+                tolerance: 'pointer',
+                opacity: '0.6',
+                delay: 200,
+                cursor: 'move',
+                containment: 'parent',
+                disabled: true
+            })
+            .disableSelection();
+        };
+        var resetSortable = function(row) {
+            jQuery(rows).parent().sortable('destroy');
+            setSortable(rows);
+            jQuery(rows).parent().sortable('enable');
+        };
+
+        var autoComplete = function(row) {
+            cells = $(row).children();
+            for (i = 0; i < cells.length; i++) {
+                inputs = $(cells[i]).find('input[id*=lookup]:first');
+                if (inputs.length > 0) {
+                    // Found!
+                    var that = jQuery('#' + inputs.attr('id'));
+                    that.autocomplete({
+                        source: function(request, response) {
+                            jQuery.getJSON('../foreignkey_autocomplete/',
+                                {
+                                   'search_fields': {{ inline_admin_formset.formset.prefix }}_search_fields,
+                                   'app_label': {{ inline_admin_formset.formset.prefix }}_app_label,
+                                   'model_name': {{ inline_admin_formset.formset.prefix }}_model_name,
+                                   'q': that.val()
+                                },
+                                response
+                            );
+                        },
+                        minLength: 1,
+                        focus: function( event, ui ) {
+                            if(ui.item.id > 0)
+                                that.val( ui.item.label );
+                            return false;
+                        },
+                        select: function(event, ui) {
+                            if(ui.item.id > 0) {
+                                jQuery('#id_' + that.attr('id').replace(/lookup_/g, '')).val(ui.item.id);
+                                if({{ inline_admin_formset.formset.prefix }}_preview != 'False') {
+                                    jQuery('#preview_id_' + that.attr('id').replace(/lookup_/g, '')).remove();
+                                    jQuery('#add_id_' + that.attr('id').replace(/lookup_/g, '')).after('<div id="preview_id_' + that.attr('id').replace(/lookup_/g, '') +'"><img width="200" style="margin:2px; border:1px solid #333" src="' + ui.item.thumb + '" /></div>');
+                                }
+                            }
+                            return false;
+                        }
+                    })
+                    .data( "autocomplete" )._renderItem = function( ul, item ) {
+                        if({{ inline_admin_formset.formset.prefix }}_preview != 'False' && item.id > 0)
+                            mini_preview = '<img width="50" style="margin:2px 2px 0 2px; border:1px solid #333" src="' + item.thumb + '" />'
+                        else
+                            mini_preview = ''
+                        return jQuery( '<li></li>' )
+                            .data( "item.autocomplete", item )
+                            .append( '<a>' + mini_preview + item.label + '</a>' )
+                            .appendTo( ul )
+                    };
+                    break;
+                }
+            }
+        };
+        autoComplete(rows);
 
         var alternatingRows = function(row) {
             $(rows).not(".add-row").removeClass("row1 row2")
@@ -235,6 +344,7 @@ function inspect(obj, maxLevels, level)
                 updateSelectFilter();
                 alternatingRows(row);
                 tieDropDowns(row);
+                autoComplete(row);
             })
         });
     });

@@ -1,9 +1,10 @@
 
 COMPANY_STATUS = (
+    ('-1', u'Deleted'),
     (1, u'Draft'),
-    (2, u'Waiting Review'),
+    (2, u'Awaiting Review'),
     (3, u'Entered By Customer'),
-    (4, u'Fina'),
+    (4, u'Final'),
 )
 
 COMPANY_PERSON_RELATION = (
