@@ -1,5 +1,5 @@
 from django.db import models
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS
 from itputils import LANGUAGES, COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
@@ -51,33 +51,40 @@ class Brand(models.Model):
         return self.name
 
 class Company(models.Model):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, help_text="This is only for internal system use to find this item.") #title this article just for internal use to distinguish article items.
     pobox = models.CharField(max_length=10)
-    address = models.CharField(max_length=255)
-    address_2 = models.CharField(max_length=255)
     country = models.CharField( choices=COUNTRIES, max_length=5 )
     city = models.CharField( max_length=255 )
-    area = models.CharField(max_length=255)
     zip_code =  models.CharField(max_length=5, blank=True, null=True)
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
     phone = models.CharField(max_length=255) 
     fax = models.CharField(max_length=255) 
     email = models.EmailField()
+
+    contact_person = models.CharField(max_length=255, blank=True, null=True,)
+    contact_person_mobile = models.CharField(max_length=255, blank=True, null=True,)
+
     url = models.URLField( verify_exists=True, blank=True, null=True )
     facebook = models.CharField( max_length=255, blank=True, null=True )
     twitter = models.CharField(max_length=255, blank=True, null=True )
+    logo = models.ImageField(upload_to='itpdirectory_company_logo',null=True,blank=True)
 
     status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+    type = models.IntegerField( choices=COMPANY_TYPES, default=1 )
     is_active = models.BooleanField()
    
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )
     company = models.ManyToManyField( "self" , null=True, blank=True, through="ManyCompanyCompany", symmetrical=False, related_name='related_company' )
     brand = models.ManyToManyField( Brand, null=True, blank=True ) #, through="ManyBrandCompany" )
 
-    def __unicode__(self):
-        return self.name
+    #location field
+    lng = models.FloatField(verbose_name='latitude', blank=True, null=True, help_text="Please mark your location on the map below" )
+    lat = models.FloatField(verbose_name='longitude', blank=True, null=True, help_text="Please mark your location on the map below" )
+    zoom_level = models.IntegerField(blank=True, null=True)
 
+    def __unicode__(self):
+        return self.title
 
     def person_link(self):
         return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_person_add" ) , self.id  )
@@ -111,7 +118,16 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
+class CompanyTranslation(models.Model):
+    company = models.ForeignKey( Company )
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    address_2 = models.CharField(max_length=255)
+    area = models.CharField(max_length=255)
+    language = models.IntegerField( choices=LANGUAGES, default=1 )
 
+    def __unicode__(self):
+        return self.name
 
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
@@ -132,8 +148,13 @@ class PersonBio(models.Model):
     person = models.ForeignKey( Person )
     title = models.CharField(max_length=255, help_text="This is only for internal system use to find this item.") #title this article just for internal use to distinguish article items.
     name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
+    job_title = models.CharField(max_length=255, help_text="What do they do in this version?")
     biography = models.TextField()
     language = models.IntegerField( choices=LANGUAGES, default=1 )
+
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = "Biographies"

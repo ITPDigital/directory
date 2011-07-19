@@ -1,5 +1,5 @@
 from django.contrib import admin
-from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, Person, PersonBio, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany  
+from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, CompanyTranslation, Person, PersonBio, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany 
 import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -25,6 +25,10 @@ class ManyCompanyCompanyInline(admin.TabularInline):
     fk_name = 'child' 
     extra = 1    
 
+class CompanyTranslationInline(admin.TabularInline):
+    model = CompanyTranslation
+    extra = 1
+
 #class ManyBrandCompanyInline(admin.TabularInline):
 #    model = ManyBrandCompany
 #    extra = 1
@@ -42,9 +46,9 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
-    list_filter = ( 'status', 'is_active', 'main_industry',  'city', )
-    inlines = ( ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
+    list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
+    list_filter = ( 'status', 'is_active', 'main_industry', 'city'  )
+    inlines = (CompanyTranslationInline, ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
     search_fields = ('name',)
 
     def add_view(self, request, extra_context=None):
@@ -153,5 +157,6 @@ admin.site.register( Magazine )
 admin.site.register( Category, CategoryAdmin )
 admin.site.register( Brand )
 admin.site.register( Company, CompanyAdmin )
+admin.site.register( CompanyTranslation )
 admin.site.register( Person, PersonAdmin )
 admin.site.register( PersonBio )

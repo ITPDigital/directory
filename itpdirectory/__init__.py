@@ -1,9 +1,14 @@
 
+COMPANY_TYPES = (
+    (1, u'Business'), #Gaurav Directories
+    (2, u'Outlet'), # Time Out
+)
+
 COMPANY_STATUS = (
     (1, u'Draft'),
     (2, u'Waiting Review'),
     (3, u'Entered By Customer'),
-    (4, u'Fina'),
+    (4, u'Final'),
 )
 
 COMPANY_PERSON_RELATION = (
