@@ -1,11 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS, STATE_TYPES
-from itputils import COUNTRIES, CITIES
-=======
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS, STATE_TYPES
 from itputils import LANGUAGES, COUNTRIES, CITIES
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.core.mail import mail_managers
@@ -90,19 +85,15 @@ class Company(models.Model):
     twitter = models.CharField(max_length=255, blank=True, null=True )
     logo = models.ImageField(upload_to='itpdirectory_company_logo',null=True,blank=True)
 
-<<<<<<< HEAD
     state = models.IntegerField( choices=COMPANY_STATUS, default=1 )
-=======
-    status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+
     type = MultipleChoiceField( widget=CheckboxSelectMultiple, choices=COMPANY_TYPES )
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
     is_active = models.BooleanField()
    
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )
     company = models.ManyToManyField( "self" , null=True, blank=True, through="ManyCompanyCompany", symmetrical=False, related_name='related_company' )
     brand = models.ManyToManyField( Brand, null=True, blank=True ) #, through="ManyBrandCompany" )
 
-<<<<<<< HEAD
     class Meta:
         verbose_name_plural = "Companies"
         ordering = ['name']
@@ -114,7 +105,7 @@ class Company(models.Model):
         return None
         # i needs a logo
         #return self.image.url
-=======
+
     #location field
     lng = models.FloatField(verbose_name='latitude', blank=True, null=True, help_text="Please mark your location on the map below" )
     lat = models.FloatField(verbose_name='longitude', blank=True, null=True, help_text="Please mark your location on the map below" )
@@ -122,7 +113,6 @@ class Company(models.Model):
 
     def __unicode__(self):
         return self.title
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
 
     def person_link(self):
         return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_person_add" ) , self.id  )
@@ -156,7 +146,6 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
-<<<<<<< HEAD
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -172,7 +161,7 @@ class Person(models.Model):
     class Meta:
         verbose_name_plural = "People"
         ordering = ['first_name', 'last_name']
-=======
+
 class CompanyTranslation(models.Model):
     company = models.ForeignKey( Company )
     name = models.CharField(max_length=255)
@@ -188,7 +177,6 @@ class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     birth_date = models.DateField(help_text='Birth date format should be yyyy-mm-dd e.g. 1980-05-25', blank=True, null=True)
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
 
     def __unicode__(self):
         return "%s %s" % ( self.first_name , self.last_name )
@@ -212,10 +200,6 @@ class PersonBio(models.Model):
         return "%s" % ( self.name )
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
 class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
     biography = models.ForeignKey( PersonBio )

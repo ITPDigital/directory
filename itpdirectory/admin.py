@@ -42,16 +42,9 @@ class ManyCompanyCompanyInline(InlineAutocompleteAdmin):
     related_search_fields = {  'related_to': ('name',), }
     template = "admin/itpdirectory/company/tabular.html"
 
-<<<<<<< HEAD
-=======
 class CompanyTranslationInline(admin.TabularInline):
     model = CompanyTranslation
     extra = 1
-
-#class ManyBrandCompanyInline(admin.TabularInline):
-#    model = ManyBrandCompany
-#    extra = 1
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
 
 class PersonBioAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
@@ -65,7 +58,6 @@ class PersonBioAdmin(admin.ModelAdmin):
               )
 
 
-<<<<<<< HEAD
 class CompanyAdminForm(forms.ModelForm):
     brand = ManyToManyByLetter(Brand, field_name="name", required=False,)
 
@@ -87,20 +79,15 @@ class CompanyAdminForm(forms.ModelForm):
 
 
 class CompanyAdmin(FkAutocompleteAdmin):
-    list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
-    list_filter = ( 'state', 'is_active', 'main_industry',  'city', )
-    ordering       = ( 'name', )
-=======
-class CompanyAdmin(admin.ModelAdmin):
     list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
     list_filter = ( 'status', 'is_active', 'main_industry', 'city'  )
-    inlines = (CompanyTranslationInline, ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
->>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
+    ordering       = ( 'name', )
     search_fields = ('name',)
 
     filter_horizontal = ( 'brand', )
 
     inlines = [
+        CompanyTranslationInline,
         ManyDirectoryCompanyInline,
         ManyCompanyCompanyInline,
     ]
