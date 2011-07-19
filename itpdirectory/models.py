@@ -142,7 +142,7 @@ class PersonBio(models.Model):
     #display fields
     title = models.CharField(max_length=255, help_text="To internally recognize this item in this system") #this overrides the previous for display purposes.
     name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
-    nationality = models.CharField( choices=COUNTRIES, max_length=5 )
+    nationality = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True  )
     residence = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True )
     email = models.EmailField(max_length=75, null=True, blank=True )
     job_title = models.CharField(max_length=255, null=True, blank=True)
