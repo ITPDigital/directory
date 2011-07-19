@@ -41,15 +41,22 @@ def company_directory_many_ajax_servant(request):
     res = None
     if ask == "dir":
         year = request.GET.get("year")
-        res = Directory.objects.filter( year__id=year).values_list("id","name")
+        model = Directory
+        filter = {'year__id': year}
     elif ask == "cat":
         dirs = request.GET.get("dir")
-        res = Category.objects.filter( directory__id=dirs, category__isnull=True).values_list("id", "name")
+        model = Category
+        filter = {'directory__id': dirs, 'category__isnull': True}
     elif ask == "subcat":
         cat = request.GET.get("cat")
-        res = Category.objects.filter( category__id=cat , category__isnull=False).values_list("id", "name")
+        model = Category
+        filter = {'category__id': cat, 'category__isnull': False}
 
-    ret = { 'choices' : list(res), } 
-    if res:
-        return HttpResponse(simplejson.dumps( ret ), content_type="application/json")
-    return HttpResponse( "Awkward request!" )
+    try:
+        res = model.objects.filter( **filter ).values_list("id","name")
+        ret = { 'choices' : list(res), }
+
+    except:
+        ret = { 'choices' : 0, }
+
+    return HttpResponse(simplejson.dumps( ret ), content_type="application/json")

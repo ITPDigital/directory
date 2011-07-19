@@ -51,8 +51,7 @@ def getObjects(model, lookup_dict, select_related):
     the select_related part of the queryset (ignored if None).
     """
     manager = _getManager(model, select_related)
-    # Mohammed: added limit 100
-    return manager.filter(**lookup_dict)[:100]
+    return manager.filter(**lookup_dict)
     
 def getObject(model, lookup_dict, select_related):
     """

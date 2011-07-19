@@ -131,7 +131,7 @@ function inspect(obj, maxLevels, level) {
             var prefix = "manydirectorycompany_set-";
 
             field = "year"; //test field
-            fields = [ 'year', 'directory', 'category' ];
+            fields = [ 'year', 'directory', 'category', 'subcategory' ];
 
             cells = $(row).children();
             for (i = 0; i < cells.length; i++) {
@@ -154,10 +154,12 @@ function inspect(obj, maxLevels, level) {
                                     case 'year': fill_less( url+"?ask=dir&year="+$(this).val(),  "id_"+prefix+ num +"-directory"   ); break;
                                     case 'directory': fill_less( url+"?ask=cat&dir="+$(this).val(),  "id_"+prefix+num +"-category"   ); break;
                                     case 'category': fill_less( url+"?ask=subcat&cat="+$(this).val(), "id_"+prefix+num+"-subcategory"  ); break;
+                                    case 'subcategory': //nothing
                                 }
-
                             });
-                            if ( fields[j] != "year") bind_to.empty();
+                            if (fields[j] != "year")
+                                if(!$("#"+prefix+k).hasClass('has_original'))
+                                    bind_to.empty();
                         }
                         k++;
                     }
@@ -257,17 +259,14 @@ function inspect(obj, maxLevels, level) {
                         },
                         minLength: 1,
                         focus: function( event, ui ) {
-                            if(ui.item.id > 0)
-                                that.val( ui.item.label );
+                            that.val( ui.item.label );
                             return false;
                         },
                         select: function(event, ui) {
-                            if(ui.item.id > 0) {
-                                jQuery('#id_' + that.attr('id').replace(/lookup_/g, '')).val(ui.item.id);
-                                if({{ inline_admin_formset.formset.prefix }}_preview != 'False') {
-                                    jQuery('#preview_id_' + that.attr('id').replace(/lookup_/g, '')).remove();
-                                    jQuery('#add_id_' + that.attr('id').replace(/lookup_/g, '')).after('<div id="preview_id_' + that.attr('id').replace(/lookup_/g, '') +'"><img width="200" style="margin:2px; border:1px solid #333" src="' + ui.item.thumb + '" /></div>');
-                                }
+                            jQuery('#id_' + that.attr('id').replace(/lookup_/g, '')).val(ui.item.id);
+                            if({{ inline_admin_formset.formset.prefix }}_preview != 'False') {
+                                jQuery('#preview_id_' + that.attr('id').replace(/lookup_/g, '')).remove();
+                                jQuery('#add_id_' + that.attr('id').replace(/lookup_/g, '')).after('<div id="preview_id_' + that.attr('id').replace(/lookup_/g, '') +'"><img width="200" style="margin:2px; border:1px solid #333" src="' + ui.item.thumb + '" /></div>');
                             }
                             return false;
                         }

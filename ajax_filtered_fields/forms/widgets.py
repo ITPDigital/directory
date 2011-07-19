@@ -12,7 +12,6 @@ def _renderFilter(js_method_name, element_id, model, lookup_list,
     select_related):
     """Return the html output of a filter link."""
     label, lookup_dict = lookup_list
-    # Mohammed: added state check
     script = "ajax_filtered_fields.%s('%s', '%s', '%s', '%s', '%s')" % (
         js_method_name,
         element_id,
@@ -119,20 +118,20 @@ class FilteredSelect(forms.Select):
         # choices links
         # if there is only one choice, then nothing will be rendered
         lookups_output = ""
-        #lookups = utils.getLookups(self.lookups)
-        #if len(lookups) > 1:
-        #    js_method_name = "getForeignKeyJSON"
-        #    lookups_output = "\n".join(
-        #        _renderFilter(js_method_name, self._element_id,
-        #            self.model, i, self.select_related)
-        #        for i in lookups)
+        lookups = utils.getLookups(self.lookups)
+        if len(lookups) > 1:
+            js_method_name = "getForeignKeyJSON"
+            lookups_output = "\n".join(
+               _renderFilter(js_method_name, self._element_id,
+                    self.model, i, self.select_related)
+                for i in lookups)
 
         # get the selected object name
         selection = "-" * 9
         if value:
             selection = utils.getObject(self.model, {"pk": value}, 
                 self.select_related)
-        
+
         # filter selectbox input
         filter_id = "%s_input" % self._element_id
         

@@ -369,7 +369,7 @@ class FkAutocompleteAdmin(admin.ModelAdmin):
                         id = f.pk
                         data.append({'id': id, 'label': label, 'thumb': thumb})
                 else:
-                    data.append({'id': 0, 'label': 'No results found', 'thumb': ''})
+                    data.append({'id': '', 'label': 'No results found', 'thumb': ''})
             elif object_pk:
                 try:
                     obj = queryset.get(pk=object_pk)

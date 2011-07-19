@@ -10,15 +10,15 @@ from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django import forms
 
-from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField
+from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField, ManyToManyByRelatedField
 
 from itputils.autocomplete_admin import FkAutocompleteAdmin, InlineAutocompleteAdmin
 
 
 class ManyDirectoryCompanyForm(forms.ModelForm):
-    directory = ForeignKeyByRelatedField(Directory, field_name="year", required=False,)
-    category = ForeignKeyByRelatedField(Category, field_name="directory", required=False,)
-    subcategory = ForeignKeyByRelatedField(Category, field_name="category", required=False,)
+    #directory = ForeignKeyByRelatedField(Directory, field_name="year", required=False,)
+    #category = ForeignKeyByRelatedField(Category, field_name="directory", required=False,)
+    #subcategory = ForeignKeyByRelatedField(Category, field_name="category", required=False,)
 
     class Meta:
         model = ManyDirectoryCompany
@@ -29,6 +29,7 @@ class ManyDirectoryCompanyInline(admin.TabularInline):
     extra = 1
     form = ManyDirectoryCompanyForm
     template = "admin/itpdirectory/company/tabular.html"
+
 
 class ManyCompanyPersonInline(admin.TabularInline):
     model =  ManyCompanyPerson
