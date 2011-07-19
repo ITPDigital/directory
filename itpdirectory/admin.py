@@ -1,5 +1,5 @@
 from django.contrib import admin
-from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, Person, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany  
+from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, Person, PersonBio, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany  
 import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -154,3 +154,4 @@ admin.site.register( Category, CategoryAdmin )
 admin.site.register( Brand )
 admin.site.register( Company, CompanyAdmin )
 admin.site.register( Person, PersonAdmin )
+admin.site.register( PersonBio )

@@ -1,6 +1,6 @@
 from django.db import models
 from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS
-from itputils import COUNTRIES, CITIES
+from itputils import LANGUAGES, COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.core.mail import mail_managers
@@ -30,7 +30,8 @@ class Directory(models.Model):
 
     def __unicode__(self):
         return self.name
-
+    class Meta:
+        verbose_name_plural = "Directories"
 
 
 class Category(models.Model):
@@ -40,6 +41,8 @@ class Category(models.Model):
     
     def __unicode__(self):
         return self.name
+    class Meta:
+        verbose_name_plural = "Categories"
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
@@ -105,6 +108,9 @@ class Company(models.Model):
             subject ="ITP Directory :: New company got added"
             mail_managers(subject, message, fail_silently )
 
+    class Meta:
+        verbose_name_plural = "Companies"
+
 
 
 class Person(models.Model):
@@ -120,6 +126,17 @@ class Person(models.Model):
     def __unicode__(self):
         return "%s %s" % ( self.first_name , self.last_name )
 
+
+
+class PersonBio(models.Model):
+    person = models.ForeignKey( Person )
+    title = models.CharField(max_length=255, help_text="This is only for internal system use to find this item.") #title this article just for internal use to distinguish article items.
+    name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
+    biography = models.TextField()
+    language = models.IntegerField( choices=LANGUAGES, default=1 )
+
+    class Meta:
+        verbose_name_plural = "Biographies"
 
 #MANY TO MANY RELATIONS
 #class ManyDirectoryCategory(models.Model):
