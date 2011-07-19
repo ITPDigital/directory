@@ -4,7 +4,8 @@ from itputils import LANGUAGES, COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.core.mail import mail_managers
-
+from django.forms.fields import MultipleChoiceField
+from django.forms.widgets import CheckboxSelectMultiple
 from django.conf import settings
 
 class Year(models.Model):
@@ -71,7 +72,7 @@ class Company(models.Model):
     logo = models.ImageField(upload_to='itpdirectory_company_logo',null=True,blank=True)
 
     status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
-    type = models.IntegerField( choices=COMPANY_TYPES, default=1 )
+    type = MultipleChoiceField( widget=CheckboxSelectMultiple, choices=COMPANY_TYPES )
     is_active = models.BooleanField()
    
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )
@@ -132,41 +133,34 @@ class CompanyTranslation(models.Model):
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    nationality = models.CharField( choices=COUNTRIES, max_length=5 )
-    email = models.EmailField(max_length=75 )
-    job_title = models.CharField(max_length=255)
-    job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, default=1 )
-    company = models.ManyToManyField( Company, through='ManyCompanyPerson')
-    year = models.ManyToManyField( Year ) 
+    birth_date = models.DateField(help_text='Birth date format should be yyyy-mm-dd e.g. 1980-05-25', blank=True, null=True)
 
     def __unicode__(self):
         return "%s %s" % ( self.first_name , self.last_name )
 
-
-
 class PersonBio(models.Model):
-    person = models.ForeignKey( Person )
-    title = models.CharField(max_length=255, help_text="This is only for internal system use to find this item.") #title this article just for internal use to distinguish article items.
+    #display fields
+    title = models.CharField(max_length=255, help_text="To internally recognize this item in this system") #this overrides the previous for display purposes.
     name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
-    job_title = models.CharField(max_length=255, help_text="What do they do in this version?")
-    biography = models.TextField()
-    language = models.IntegerField( choices=LANGUAGES, default=1 )
+    nationality = models.CharField( choices=COUNTRIES, max_length=5 )
+    residence = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True )
+    email = models.EmailField(max_length=75, null=True, blank=True )
+    job_title = models.CharField(max_length=255, null=True, blank=True)
+    job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, null=True, blank=True )
+    company = models.ManyToManyField( Company, through='ManyCompanyPerson', null=True, blank=True)
+    biography = models.TextField( null=True, blank=True )
+    language = models.IntegerField( choices=LANGUAGES, default=0 )
 
+    person = models.ForeignKey( Person )
 
     def __unicode__(self):
-        return self.name
+        return "%s" % ( self.name )
 
-    class Meta:
-        verbose_name_plural = "Biographies"
 
-#MANY TO MANY RELATIONS
-#class ManyDirectoryCategory(models.Model):
-#    directory = models.ForeignKey(Directory)
-#    category = models.ForeignKey(Category)
 
 class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
-    person = models.ForeignKey( Person )
+    biography = models.ForeignKey( PersonBio )
     relation = models.IntegerField( choices=COMPANY_PERSON_RELATION, default=1 )
     directory = models.ManyToManyField( Directory  ) 
 

@@ -33,11 +33,11 @@ class CompanyTranslationInline(admin.TabularInline):
 #    model = ManyBrandCompany
 #    extra = 1
 
-class PersonAdmin(admin.ModelAdmin):
+class PersonBioAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
     list_filter = ( 'job_function', 'job_title' )
     inlines = ( ManyCompanyPersonInline,  )
-    search_fields = ('first_name','last_name', )
+    search_fields = ('name','title', )
 
     class Media:
         js = ( 
@@ -158,5 +158,5 @@ admin.site.register( Category, CategoryAdmin )
 admin.site.register( Brand )
 admin.site.register( Company, CompanyAdmin )
 admin.site.register( CompanyTranslation )
-admin.site.register( Person, PersonAdmin )
-admin.site.register( PersonBio )
+admin.site.register( PersonBio, PersonBioAdmin )
+admin.site.register( Person )
