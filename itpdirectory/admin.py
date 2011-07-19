@@ -39,7 +39,7 @@ class ManyCompanyCompanyInline(InlineAutocompleteAdmin):
     model =  ManyCompanyCompany
     fk_name = 'company'
     extra = 1
-    related_search_fields = {  'related_to': ('name',), }
+    related_search_fields = {  'related_to': ('title',), }
     template = "admin/itpdirectory/company/tabular.html"
 
 class CompanyTranslationInline(admin.TabularInline):
@@ -80,9 +80,9 @@ class CompanyAdminForm(forms.ModelForm):
 
 class CompanyAdmin(FkAutocompleteAdmin):
     list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
-    list_filter = ( 'status', 'is_active', 'main_industry', 'city'  )
-    ordering       = ( 'name', )
-    search_fields = ('name',)
+    list_filter = ( 'state', 'is_active', 'main_industry', 'city'  )
+    ordering       = ( 'title', )
+    search_fields = ('title',)
 
     filter_horizontal = ( 'brand', )
 
@@ -94,23 +94,23 @@ class CompanyAdmin(FkAutocompleteAdmin):
 
     form = CompanyAdminForm
 
-    def add_view(self, request, extra_context=None):
-        stamp = request.GET.get("pass")
-
-        if not stamp:
-            return HttpResponseRedirect("/admin/itpdirectory/company/")
-
-        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
-        try:
-            stamp_time = datetime.fromtimestamp(int( stamp ))
-            delta = datetime.now() - stamp_time
-            s = delta.seconds
-            hours, remainder = divmod(s, 3600) 
-            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
-        except:
-            return HttpResponseRedirect("/admin/itpdirectory/company/")
-
-        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
+#    def add_view(self, request, extra_context=None):
+#        stamp = request.GET.get("pass")
+#
+#        if not stamp:
+#            return HttpResponseRedirect("/admin/itpdirectory/company/")
+#
+#        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
+#        try:
+#            stamp_time = datetime.fromtimestamp(int( stamp ))
+#            delta = datetime.now() - stamp_time
+#            s = delta.seconds
+#            hours, remainder = divmod(s, 3600)
+#            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
+#        except:
+#            return HttpResponseRedirect("/admin/itpdirectory/company/")
+#
+#        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None):
         from django.utils.dateformat import format

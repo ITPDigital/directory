@@ -111,7 +111,7 @@ class AjaxForeignKeyField(forms.ModelChoiceField):
         self.widget.select_related = select_related
         
     def clean(self, value):
-        forms.Field.clean(self, value)
+        #forms.Field.clean(self, value)
         if value in forms.fields.EMPTY_VALUES:
             return None
         # if there is only one lookup used to limit choices, then a real

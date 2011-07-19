@@ -146,21 +146,6 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
-class Person(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    nationality = models.CharField( choices=COUNTRIES, max_length=5 )
-    email = models.EmailField(max_length=75 )
-    job_title = models.CharField(max_length=255)
-    job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, default=1 )
-    company = models.ManyToManyField( Company, through='ManyCompanyPerson')
-    year = models.ManyToManyField( Year )
-
-    #bio, user, author
-
-    class Meta:
-        verbose_name_plural = "People"
-        ordering = ['first_name', 'last_name']
 
 class CompanyTranslation(models.Model):
     company = models.ForeignKey( Company )

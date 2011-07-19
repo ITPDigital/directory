@@ -140,14 +140,11 @@ function inspect(obj, maxLevels, level) {
                     // Found!
                     //directory company many to many
                     while ( true ) {
-                        console.log(selects.attr('id'))
-                        console.log("id_"+prefix+k+"-"+field)
                         if ( selects.attr('id') != "id_"+prefix+k+"-"+field   ){
                             break;
                         }
 
                         for ( var j=0; j < fields.length; j++){
-                            console.log("#id_"+prefix+k+"-"+fields[j]);
                             bind_to = $("#id_"+prefix+k+"-"+fields[j]);
                             bind_to.bind("change",function(event){
 
@@ -289,7 +286,9 @@ function inspect(obj, maxLevels, level) {
                 }
             }
         };
-        autoComplete(rows);
+        jQuery.each($(rows), function() {
+            autoComplete(this);
+        });
 
         var alternatingRows = function(row) {
             $(rows).not(".add-row").removeClass("row1 row2")
