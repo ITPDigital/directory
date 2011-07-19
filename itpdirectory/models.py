@@ -1,5 +1,5 @@
 from django.db import models
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_STATUS, STATE_TYPES
 from itputils import COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
@@ -23,11 +23,11 @@ class Magazine(models.Model):
     def __unicode__(self):
         return self.name
 
-    
+
 class Directory(models.Model):
     name = models.CharField(max_length=255)
-    year = models.ManyToManyField( Year ) 
-    
+    year = models.ManyToManyField( Year )
+
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
     magazine = models.ForeignKey(Magazine)
@@ -44,7 +44,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     directory = models.ForeignKey( Directory )
     category = models.ForeignKey("self", blank=True, null=True, related_name="child_category")
-    
+
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['name']
@@ -55,7 +55,9 @@ class Category(models.Model):
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
-    
+
+    state = models.SmallIntegerField( choices=STATE_TYPES, default=0 )
+
     def __unicode__(self):
         return self.name
 
@@ -70,14 +72,14 @@ class Company(models.Model):
     zip_code =  models.CharField(max_length=5, blank=True, null=True)
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
-    phone = models.CharField(max_length=255) 
-    fax = models.CharField(max_length=255) 
+    phone = models.CharField(max_length=255)
+    fax = models.CharField(max_length=255)
     email = models.EmailField()
     url = models.URLField( verify_exists=True, blank=True, null=True )
     facebook = models.CharField( max_length=255, blank=True, null=True )
     twitter = models.CharField(max_length=255, blank=True, null=True )
 
-    status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+    state = models.IntegerField( choices=COMPANY_STATUS, default=1 )
     is_active = models.BooleanField()
    
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )

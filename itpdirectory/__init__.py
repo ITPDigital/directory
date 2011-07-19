@@ -1,3 +1,8 @@
+STATE_TYPES = (
+    ('-1', u'Deleted'),
+    (0, u'Draft'),
+    (1, u'Published'),
+)
 
 COMPANY_STATUS = (
     ('-1', u'Deleted'),

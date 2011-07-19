@@ -11,52 +11,8 @@ function getParameterByName(name)
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-
-function tie_many_to_many_event(){
-
-    var url = "/ajax/client/company_directory_many";
-    var prefix = "manydirectorycompany_set-";
-    var i = 0;
-
-    field = "year"; //test field
-    fields = [ 'year', 'directory', 'category' ];
-    //directory company many to many
-    while ( true ) {
-        if ( $("#id_"+prefix+i+"-"+field ).attr("id") === undefined   ){
-            break;
-        }
-        
-        for ( var j=0; j < fields.length; j++){
-            bind_to = $("#id_"+prefix+i+"-"+fields[j]);
-            bind_to.bind("change",function(event){
-                
-                var name = this.name.split("-")[2] ;
-                var num = this.name.split("-")[1] ;
-                switch ( name ){
-                    case 'year': fill_less( url+"?ask=dir&year="+$(this).val(),  "id_"+prefix+ num +"-directory"   ); break;
-                    case 'directory': fill_less( url+"?ask=cat&dir="+$(this).val(),  "id_"+prefix+num +"-category"   ); break;
-                    case 'category': fill_less( url+"?ask=subcat&cat="+$(this).val(), "id_"+prefix+num+"-subcategory"  ); break;
-                }
-
-            });
-            //if ( fields[j] != "year") bind_to.empty();
-
-        }
-
-
-        i= i+1;
-    }
-
-
-}
-
-
 (function($) {
  $(document).ready(function($) {
-
-
-    tie_many_to_many_event();
-
 
     var main_industry_triger = $("#id_main_industry");
 
@@ -73,8 +29,6 @@ function tie_many_to_many_event(){
         fill_less(  '/ajax/client/country?country='+ $("#id_country").val()+'&ask=choices' , "id_city" );
     });
 
-
-  
  });
 })(django.jQuery);
 
@@ -87,7 +41,6 @@ function fill_less( url, field ){
 
 
         var selected_val = $( "#" + field ).val()  ;
-
         var selected = "";
         $( "#" + field ).empty()  ;
 

@@ -8,14 +8,27 @@ from datetime import datetime
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
+from django import forms
+
+from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField
 
 from itputils.autocomplete_admin import FkAutocompleteAdmin, InlineAutocompleteAdmin
+
+
+class ManyDirectoryCompanyForm(forms.ModelForm):
+    directory = ForeignKeyByRelatedField(Directory, field_name="year", required=False,)
+    category = ForeignKeyByRelatedField(Category, field_name="directory", required=False,)
+    subcategory = ForeignKeyByRelatedField(Category, field_name="category", required=False,)
+
+    class Meta:
+        model = ManyDirectoryCompany
 
 
 class ManyDirectoryCompanyInline(admin.TabularInline):
     model = ManyDirectoryCompany
     extra = 1
-
+    form = ManyDirectoryCompanyForm
+    template = "admin/itpdirectory/company/tabular.html"
 
 class ManyCompanyPersonInline(admin.TabularInline):
     model =  ManyCompanyPerson
@@ -42,14 +55,40 @@ class PersonAdmin(admin.ModelAdmin):
               )
 
 
+class CompanyAdminForm(forms.ModelForm):
+    brand = ManyToManyByLetter(Brand, field_name="name", required=False,)
+
+    class Meta:
+        model = Company
+
+    class Media:
+        css = {
+			'all': (settings.MEDIA_URL + "css/jquery-ui-1.8.14.custom.css",)
+		}
+        js = (
+            settings.ADMIN_MEDIA_PREFIX + "js/SelectBox.js",
+            settings.ADMIN_MEDIA_PREFIX + "js/SelectFilter2.js",
+            settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
+            settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
+            settings.MEDIA_URL + "js/ajax_filtered_fields.js",
+            settings.MEDIA_URL + "js/admin_forms.js",
+        )
+
+
 class CompanyAdmin(FkAutocompleteAdmin):
     list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
-    list_filter = ( 'status', 'is_active', 'main_industry',  'city', )
+    list_filter = ( 'state', 'is_active', 'main_industry',  'city', )
+    ordering       = ( 'name', )
+    search_fields = ('name',)
+
+    filter_horizontal = ( 'brand', )
+
     inlines = [
-        #ManyDirectoryCompanyInline,
+        ManyDirectoryCompanyInline,
         ManyCompanyCompanyInline,
     ]
-    search_fields = ('name',)
+
+    form = CompanyAdminForm
 
     def add_view(self, request, extra_context=None):
         stamp = request.GET.get("pass")
@@ -77,16 +116,6 @@ class CompanyAdmin(FkAutocompleteAdmin):
         return super(CompanyAdmin, self).changelist_view(request, extra_context)
 
 
-    class Media:
-        css = {
-			'all': (settings.MEDIA_URL + "css/jquery-ui-1.8.14.custom.css",)
-		}
-        js = (
-              settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
-              settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
-              settings.MEDIA_URL + "js/admin_forms.js", 
-              )
-
 class DirectoryAdmin( admin.ModelAdmin ):
     list_display = ( 'name', 'main_industry', 'specific_industry', 'magazine',  )
     list_filter = ( 'main_industry', )
@@ -99,9 +128,6 @@ class DirectoryAdmin( admin.ModelAdmin ):
 class CategoryAdmin( admin.ModelAdmin):
     list_display = ( 'name', 'category', )
     list_filter = (  'directory', )
-
-
-
 
 
 class LogEntryAdmin(admin.ModelAdmin):

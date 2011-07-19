@@ -69,38 +69,6 @@
 
 <script type="text/javascript">
 
-function tie_many_to_many_event() {
-    var url = "/ajax/client/company_directory_many";
-    var prefix = "manydirectorycompany_set-";
-    var i = 0;
-
-    field = "year"; //test field
-    fields = [ 'year', 'directory', 'category' ];
-    //directory company many to many
-    while ( true ) {
-        if ( $("#id_"+prefix+i+"-"+field ).attr("id") === undefined   ){
-            break;
-        }
-
-        for ( var j=0; j < fields.length; j++){
-            bind_to = $("#id_"+prefix+i+"-"+fields[j]);
-            bind_to.bind("change",function(event){
-
-                var name = this.name.split("-")[2] ;
-                var num = this.name.split("-")[1] ;
-                switch ( name ){
-                    case 'year': fill_less( url+"?ask=dir&year="+$(this).val(),  "id_"+prefix+ num +"-directory"   ); break;
-                    case 'directory': fill_less( url+"?ask=cat&dir="+$(this).val(),  "id_"+prefix+num +"-category"   ); break;
-                    case 'category': fill_less( url+"?ask=subcat&cat="+$(this).val(), "id_"+prefix+num+"-subcategory"  ); break;
-                }
-
-            });
-            //if ( fields[j] != "year") bind_to.empty();
-        }
-        i= i+1;
-    }
-}
-
 function inspect(obj, maxLevels, level) {
   var str = '', type, msg;
 
@@ -155,9 +123,51 @@ function inspect(obj, maxLevels, level) {
 (function($) {
     $(document).ready(function($) {
 
-        tie_many_to_many_event();
-
         var rows = "#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr";
+
+        var k = 0
+        var relatedSelects = function(row) {
+            var url = "/ajax/client/company_directory_many";
+            var prefix = "manydirectorycompany_set-";
+
+            field = "year"; //test field
+            fields = [ 'year', 'directory', 'category' ];
+
+            cells = $(row).children();
+            for (i = 0; i < cells.length; i++) {
+                selects = $(cells[i]).find('select');
+                if (selects.length > 0) {
+                    // Found!
+                    //directory company many to many
+                    while ( true ) {
+                        console.log(selects.attr('id'))
+                        console.log("id_"+prefix+k+"-"+field)
+                        if ( selects.attr('id') != "id_"+prefix+k+"-"+field   ){
+                            break;
+                        }
+
+                        for ( var j=0; j < fields.length; j++){
+                            console.log("#id_"+prefix+k+"-"+fields[j]);
+                            bind_to = $("#id_"+prefix+k+"-"+fields[j]);
+                            bind_to.bind("change",function(event){
+
+                                var name = this.name.replace("dummy-", "").split("-")[2] ;
+                                var num = this.name.replace("dummy-", "").split("-")[1] ;
+                                switch ( name ){
+                                    case 'year': fill_less( url+"?ask=dir&year="+$(this).val(),  "id_"+prefix+ num +"-directory"   ); break;
+                                    case 'directory': fill_less( url+"?ask=cat&dir="+$(this).val(),  "id_"+prefix+num +"-category"   ); break;
+                                    case 'category': fill_less( url+"?ask=subcat&cat="+$(this).val(), "id_"+prefix+num+"-subcategory"  ); break;
+                                }
+
+                            });
+                            if ( fields[j] != "year") bind_to.empty();
+                        }
+                        k++;
+                    }
+                }
+            }
+        }
+        relatedSelects(rows);
 
         // Return a helper with preserved width of cells
         var fixHelper = function(e, ui) {
@@ -343,8 +353,9 @@ function inspect(obj, maxLevels, level) {
                 reinitDateTimeShortCuts();
                 updateSelectFilter();
                 alternatingRows(row);
-                tieDropDowns(row);
+                //tieDropDowns(row);
                 autoComplete(row);
+                relatedSelects(row);
             })
         });
     });
