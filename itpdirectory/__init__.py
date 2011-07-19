@@ -4,6 +4,11 @@ STATE_TYPES = (
     (1, u'Published'),
 )
 
+COMPANY_TYPES = (
+    (1, u'Business'), #Gaurav Directories
+    (2, u'Outlet'), # Time Out
+)
+
 COMPANY_STATUS = (
     ('-1', u'Deleted'),
     (1, u'Draft'),

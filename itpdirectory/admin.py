@@ -1,5 +1,5 @@
 from django.contrib import admin
-from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, Person, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany  
+from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, CompanyTranslation, Person, PersonBio, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany 
 import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -42,12 +42,22 @@ class ManyCompanyCompanyInline(InlineAutocompleteAdmin):
     related_search_fields = {  'related_to': ('name',), }
     template = "admin/itpdirectory/company/tabular.html"
 
+<<<<<<< HEAD
+=======
+class CompanyTranslationInline(admin.TabularInline):
+    model = CompanyTranslation
+    extra = 1
 
-class PersonAdmin(admin.ModelAdmin):
+#class ManyBrandCompanyInline(admin.TabularInline):
+#    model = ManyBrandCompany
+#    extra = 1
+>>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
+
+class PersonBioAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
     list_filter = ( 'job_function', 'job_title' )
     inlines = ( ManyCompanyPersonInline,  )
-    search_fields = ('first_name','last_name', )
+    search_fields = ('name','title', )
 
     class Media:
         js = ( 
@@ -55,6 +65,7 @@ class PersonAdmin(admin.ModelAdmin):
               )
 
 
+<<<<<<< HEAD
 class CompanyAdminForm(forms.ModelForm):
     brand = ManyToManyByLetter(Brand, field_name="name", required=False,)
 
@@ -79,6 +90,12 @@ class CompanyAdmin(FkAutocompleteAdmin):
     list_display = ( 'name', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
     list_filter = ( 'state', 'is_active', 'main_industry',  'city', )
     ordering       = ( 'name', )
+=======
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
+    list_filter = ( 'status', 'is_active', 'main_industry', 'city'  )
+    inlines = (CompanyTranslationInline, ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
+>>>>>>> 507a8b47175c39dd727eba0a102e5480e7d83f86
     search_fields = ('name',)
 
     filter_horizontal = ( 'brand', )
@@ -188,4 +205,6 @@ admin.site.register( Magazine )
 admin.site.register( Category, CategoryAdmin )
 admin.site.register( Brand )
 admin.site.register( Company, CompanyAdmin )
-admin.site.register( Person, PersonAdmin )
+admin.site.register( CompanyTranslation )
+admin.site.register( PersonBio, PersonBioAdmin )
+admin.site.register( Person )

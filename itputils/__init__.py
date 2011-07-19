@@ -1,3 +1,7 @@
+LANGUAGES = (
+    (0, u'English'),
+    (1, u'Arabic'),
+)
 
 COUNTRIES=(
     ('Popular', (
