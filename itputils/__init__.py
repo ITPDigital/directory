@@ -1,6 +1,6 @@
 LANGUAGES = (
-    (0, u'English'),
-    (1, u'Arabic'),
+    (1, u'English'),
+    (2, u'Arabic'),
 )
 
 COUNTRIES=(

@@ -115,16 +115,16 @@ class Company(models.Model):
         return self.title
 
     def person_link(self):
-        return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_person_add" ) , self.id  )
+        return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_personbio_add" ) , self.id  )
 
     person_link.allow_tags = True
     person_link.short_description = "Key Person" 
 
     def persons(self):
-        people = self.person_set.all()
+        people = self.personbio_set.all()
         string = ""
         for person in people:
-            single = '<a href="%s"> %s </a> <br/>' % ( reverse("admin:itpdirectory_person_change", args=( person.id, ) ) , person  )
+            single = '<a href="%s"> %s </a> <br/>' % ( reverse("admin:itpdirectory_personbio_change", args=( person.id, ) ) , person  )
             string = "%s %s" % ( string, single ) 
 
         return string
@@ -153,6 +153,8 @@ class CompanyTranslation(models.Model):
     address = models.CharField(max_length=255)
     address_2 = models.CharField(max_length=255)
     area = models.CharField(max_length=255)
+    directory = models.ManyToManyField( Directory  ) 
+    use_for_print = models.BooleanField()
     language = models.IntegerField( choices=LANGUAGES, default=1 )
 
     def __unicode__(self):
@@ -170,11 +172,11 @@ class PersonBio(models.Model):
     #display fields
     title = models.CharField(max_length=255, help_text="To internally recognize this item in this system") #this overrides the previous for display purposes.
     name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
+    job_title = models.CharField(max_length=255)
+    job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION )
     nationality = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True  )
     residence = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True )
     email = models.EmailField(max_length=75, null=True, blank=True )
-    job_title = models.CharField(max_length=255, null=True, blank=True)
-    job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION, null=True, blank=True )
     company = models.ManyToManyField( Company, through='ManyCompanyPerson', null=True, blank=True)
     biography = models.TextField( null=True, blank=True )
     language = models.IntegerField( choices=LANGUAGES, default=0 )

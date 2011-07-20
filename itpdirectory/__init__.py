@@ -15,6 +15,7 @@ COMPANY_STATUS = (
     (2, u'Awaiting Review'),
     (3, u'Entered By Customer'),
     (4, u'Final'),
+    (5, u'Imported - Old DB'),
 )
 
 COMPANY_PERSON_RELATION = (
