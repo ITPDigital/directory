@@ -54,9 +54,14 @@ class PersonBioAdmin(admin.ModelAdmin):
     search_fields = ('name','title', )
 
     class Media:
-        js = ( 
-              settings.MEDIA_URL + "js/admin_forms.js", 
-              )
+        css = {
+			'all': (settings.MEDIA_URL + "css/jquery-ui-1.8.14.custom.css",)
+		}
+        js = (
+            settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
+            settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
+            settings.MEDIA_URL + "js/admin_forms.js",
+        )
 
 
 class CompanyAdminForm(forms.ModelForm):
@@ -75,6 +80,7 @@ class CompanyAdminForm(forms.ModelForm):
             settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
             settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
             settings.MEDIA_URL + "js/ajax_filtered_fields.js",
+            settings.MEDIA_URL + "js/jquery.maskedinput-1.3.js",
             settings.MEDIA_URL + "js/admin_forms.js",
         )
 

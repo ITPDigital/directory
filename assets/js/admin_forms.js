@@ -1,3 +1,4 @@
+$ = django.jQuery;
 
 function getParameterByName(name)
 {
@@ -12,7 +13,7 @@ function getParameterByName(name)
 }
 
 (function($) {
- $(document).ready(function($) {
+ $(document).ready(function(jQuery$) {
 
     var main_industry_triger = $("#id_main_industry");
 
@@ -29,10 +30,13 @@ function getParameterByName(name)
         fill_less(  '/ajax/client/country?country='+ $("#id_country").val()+'&ask=choices' , "id_city" );
     });
 
+    if(jQuery("#id_phone").attr('id') != 'undefined') jQuery("#id_phone").mask('999 999 9999999');
+    if(jQuery("#id_fax").attr('id') != 'undefined') jQuery("#id_fax").mask('999 999 9999999');
+    if(jQuery("#id_contact_person_mobile").attr('id') != 'undefined')  jQuery("#id_contact_person_mobile").mask('999 999 9999999');
+
  });
 })(django.jQuery);
 
-$ = django.jQuery;
 
 function fill_less( url, field ){
         ///This basically fills a choice field according to a parent one, example fills cities choice field according to given country from a previous choice field

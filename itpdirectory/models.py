@@ -1,6 +1,6 @@
 from django.db import models
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS, STATE_TYPES
-from itputils import LANGUAGES, COUNTRIES, CITIES
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS, STATE_TYPES, SALUTATIONS
+from itputils import LANGUAGES, COUNTRIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.core.mail import mail_managers
@@ -173,12 +173,13 @@ class Person(models.Model):
 
 class PersonBio(models.Model):
     #display fields
-    title = models.CharField(max_length=255, help_text="To internally recognize this item in this system") #this overrides the previous for display purposes.
-    name = models.CharField(max_length=255, help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
+    title = models.CharField(max_length=255, verbose_name="Version Identifier", help_text="To internally recognize this item in this system. For example Prince Waleed Online Arabic vs Prince Waleed Print English ") #this overrides the previous for display purposes.
+    salutation = models.CharField(choices=SALUTATIONS, max_length=10, )
+    name = models.CharField(max_length=255, verbose_name="Display Name", help_text="How do you wish to display the guy's name this time?") #this overrides the previous for display purposes.
     job_title = models.CharField(max_length=255)
     job_function = models.IntegerField( choices=PERSON_JOB_FUNCTION )
     nationality = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True  )
-    residence = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True )
+    residence = models.CharField( choices=COUNTRIES, verbose_name="Residing in", max_length=5, null=True, blank=True )
     email = models.EmailField(max_length=75, null=True, blank=True )
     company = models.ManyToManyField( Company, through='ManyCompanyPerson', null=True, blank=True)
     biography = models.TextField( null=True, blank=True )
