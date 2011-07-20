@@ -160,6 +160,9 @@ class CompanyTranslation(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        db_table = 'itpdirectory_company_translation'
+
 class Person(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -186,26 +189,34 @@ class PersonBio(models.Model):
     def __unicode__(self):
         return "%s" % ( self.name )
 
+    class Meta:
+        db_table = 'itpdirectory_person_bio'
+
 
 class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
     biography = models.ForeignKey( PersonBio )
     relation = models.IntegerField( choices=COMPANY_PERSON_RELATION, default=1 )
-    directory = models.ManyToManyField( Directory  ) 
+    directory = models.ManyToManyField( Directory  )
 
     def __unicode__(self):
         return mark_safe( "%s - %s" % ( self.company, self.person )  )
 
+    class Meta:
+        db_table = 'itpdirectory_company_person'
+
 
 class ManyDirectoryCompany(models.Model):
     company = models.ForeignKey( Company )
-    year = models.ForeignKey( Year ) 
+    year = models.ForeignKey( Year )
     directory = models.ForeignKey(Directory)
     category = models.ForeignKey( Category, related_name="directory_company_category" )
     subcategory = models.ForeignKey( Category, related_name="directory_company_sub_category" )
 
     class Meta:
         verbose_name_plural = "Directories"
+        db_table = 'itpdirectory_company_directory'
+
 
 
 class ManyCompanyCompany(models.Model):
@@ -216,6 +227,7 @@ class ManyCompanyCompany(models.Model):
     class Meta:
         verbose_name_plural = "Company Relations"
         unique_together = ('company', 'related_to',)
+        db_table = 'itpdirectory_company_related_company'
 
 
     
