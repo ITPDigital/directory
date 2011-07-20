@@ -95,23 +95,23 @@ class CompanyAdmin(FkAutocompleteAdmin):
 
     form = CompanyAdminForm
 
-#    def add_view(self, request, extra_context=None):
-#        stamp = request.GET.get("pass")
-#
-#        if not stamp:
-#            return HttpResponseRedirect("/admin/itpdirectory/company/")
-#
-#        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
-#        try:
-#            stamp_time = datetime.fromtimestamp(int( stamp ))
-#            delta = datetime.now() - stamp_time
-#            s = delta.seconds
-#            hours, remainder = divmod(s, 3600)
-#            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
-#        except:
-#            return HttpResponseRedirect("/admin/itpdirectory/company/")
-#
-#        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
+    def add_view(self, request, extra_context=None):
+        stamp = request.GET.get("pass")
+
+        if not stamp:
+            return HttpResponseRedirect("/admin/itpdirectory/company/")
+
+        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
+        try:
+            stamp_time = datetime.fromtimestamp(int( stamp ))
+            delta = datetime.now() - stamp_time
+            s = delta.seconds
+            hours, remainder = divmod(s, 3600)
+            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
+        except:
+            return HttpResponseRedirect("/admin/itpdirectory/company/")
+
+        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None):
         from django.utils.dateformat import format
