@@ -8,30 +8,44 @@ from datetime import datetime
 from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
+from django import forms
+
+from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField, ManyToManyByRelatedField
+
+from itputils.autocomplete_admin import FkAutocompleteAdmin, InlineAutocompleteAdmin
+
+
+class ManyDirectoryCompanyForm(forms.ModelForm):
+    #directory = ForeignKeyByRelatedField(Directory, field_name="year", required=False,)
+    #category = ForeignKeyByRelatedField(Category, field_name="directory", required=False,)
+    #subcategory = ForeignKeyByRelatedField(Category, field_name="category", required=False,)
+
+    class Meta:
+        model = ManyDirectoryCompany
 
 
 class ManyDirectoryCompanyInline(admin.TabularInline):
     model = ManyDirectoryCompany
     extra = 1
+    form = ManyDirectoryCompanyForm
+    template = "admin/itpdirectory/company/tabular.html"
+
 
 class ManyCompanyPersonInline(admin.TabularInline):
     model =  ManyCompanyPerson
     extra = 1    
 
 
-
-class ManyCompanyCompanyInline(admin.TabularInline):
+class ManyCompanyCompanyInline(InlineAutocompleteAdmin):
     model =  ManyCompanyCompany
-    fk_name = 'child' 
-    extra = 1    
+    fk_name = 'company'
+    extra = 1
+    related_search_fields = {  'related_to': ('title',), }
+    template = "admin/itpdirectory/company/tabular.html"
 
 class CompanyTranslationInline(admin.TabularInline):
     model = CompanyTranslation
     extra = 1
-
-#class ManyBrandCompanyInline(admin.TabularInline):
-#    model = ManyBrandCompany
-#    extra = 1
 
 class PersonBioAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
@@ -45,29 +59,59 @@ class PersonBioAdmin(admin.ModelAdmin):
               )
 
 
-class CompanyAdmin(admin.ModelAdmin):
+class CompanyAdminForm(forms.ModelForm):
+    brand = ManyToManyByLetter(Brand, field_name="name", required=False,)
+
+    class Meta:
+        model = Company
+
+    class Media:
+        css = {
+			'all': (settings.MEDIA_URL + "css/jquery-ui-1.8.14.custom.css",)
+		}
+        js = (
+            settings.ADMIN_MEDIA_PREFIX + "js/SelectBox.js",
+            settings.ADMIN_MEDIA_PREFIX + "js/SelectFilter2.js",
+            settings.MEDIA_URL + "js/jquery-1.5.1.min.js",
+            settings.MEDIA_URL + "js/jquery-ui-1.8.14.custom.min.js",
+            settings.MEDIA_URL + "js/ajax_filtered_fields.js",
+            settings.MEDIA_URL + "js/admin_forms.js",
+        )
+
+
+class CompanyAdmin(FkAutocompleteAdmin):
     list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
-    list_filter = ( 'status', 'is_active', 'main_industry', 'city'  )
-    inlines = (CompanyTranslationInline, ManyCompanyCompanyInline,  ManyDirectoryCompanyInline, )
-    search_fields = ('name',)
+    list_filter = ( 'state', 'is_active', 'main_industry', 'city'  )
+    ordering       = ( 'title', )
+    search_fields = ('title',)
 
-    def add_view(self, request, extra_context=None):
-        stamp = request.GET.get("pass")
+    filter_horizontal = ( 'brand', )
 
-        if not stamp:
-            return HttpResponseRedirect("/admin/itpdirectory/company/")
+    inlines = [
+        CompanyTranslationInline,
+        ManyDirectoryCompanyInline,
+        ManyCompanyCompanyInline,
+    ]
 
-        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
-        try:
-            stamp_time = datetime.fromtimestamp(int( stamp ))
-            delta = datetime.now() - stamp_time
-            s = delta.seconds
-            hours, remainder = divmod(s, 3600) 
-            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
-        except:
-            return HttpResponseRedirect("/admin/itpdirectory/company/")
+    form = CompanyAdminForm
 
-        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
+#    def add_view(self, request, extra_context=None):
+#        stamp = request.GET.get("pass")
+#
+#        if not stamp:
+#            return HttpResponseRedirect("/admin/itpdirectory/company/")
+#
+#        #compare the time stamp coming from the changelist if it's more than an hour redirect back. unix time.
+#        try:
+#            stamp_time = datetime.fromtimestamp(int( stamp ))
+#            delta = datetime.now() - stamp_time
+#            s = delta.seconds
+#            hours, remainder = divmod(s, 3600)
+#            if hours > 0 or delta.days > 0: return HttpResponseRedirect("/admin/itpdirectory/company/")
+#        except:
+#            return HttpResponseRedirect("/admin/itpdirectory/company/")
+#
+#        return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None):
         from django.utils.dateformat import format
@@ -76,11 +120,6 @@ class CompanyAdmin(admin.ModelAdmin):
         extra_context.update( { 'add_stamp' : format(datetime.now(), u'U') } )
         return super(CompanyAdmin, self).changelist_view(request, extra_context)
 
-
-    class Media:
-        js = ( 
-              settings.MEDIA_URL + "js/admin_forms.js", 
-              )
 
 class DirectoryAdmin( admin.ModelAdmin ):
     list_display = ( 'name', 'main_industry', 'specific_industry', 'magazine',  )
@@ -94,9 +133,6 @@ class DirectoryAdmin( admin.ModelAdmin ):
 class CategoryAdmin( admin.ModelAdmin):
     list_display = ( 'name', 'category', )
     list_filter = (  'directory', )
-
-
-
 
 
 class LogEntryAdmin(admin.ModelAdmin):

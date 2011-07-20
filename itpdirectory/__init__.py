@@ -1,3 +1,8 @@
+STATE_TYPES = (
+    ('-1', u'Deleted'),
+    (0, u'Draft'),
+    (1, u'Published'),
+)
 
 COMPANY_TYPES = (
     (1, u'Business'), #Gaurav Directories
@@ -5,8 +10,9 @@ COMPANY_TYPES = (
 )
 
 COMPANY_STATUS = (
+    ('-1', u'Deleted'),
     (1, u'Draft'),
-    (2, u'Waiting Review'),
+    (2, u'Awaiting Review'),
     (3, u'Entered By Customer'),
     (4, u'Final'),
     (5, u'Imported - Old DB'),

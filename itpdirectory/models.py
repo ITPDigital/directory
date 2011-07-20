@@ -1,5 +1,5 @@
 from django.db import models
-from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS
+from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS, STATE_TYPES
 from itputils import LANGUAGES, COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
@@ -11,6 +11,9 @@ from django.conf import settings
 class Year(models.Model):
     name = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
 
@@ -21,33 +24,44 @@ class Magazine(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Directory(models.Model):
     name = models.CharField(max_length=255)
-    year = models.ManyToManyField( Year ) 
-    
+    year = models.ManyToManyField( Year )
+
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
     magazine = models.ForeignKey(Magazine)
+
+    class Meta:
+        verbose_name_plural = "Directories"
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
     class Meta:
         verbose_name_plural = "Directories"
 
-
 class Category(models.Model):
     name = models.CharField(max_length=255)
     directory = models.ForeignKey( Directory )
     category = models.ForeignKey("self", blank=True, null=True, related_name="child_category")
-    
+
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
     class Meta:
         verbose_name_plural = "Categories"
 
+
 class Brand(models.Model):
     name = models.CharField(max_length=255)
-    
+
+    state = models.SmallIntegerField( choices=STATE_TYPES, default=0 )
+
     def __unicode__(self):
         return self.name
 
@@ -59,8 +73,8 @@ class Company(models.Model):
     zip_code =  models.CharField(max_length=5, blank=True, null=True)
     main_industry = models.IntegerField( choices=MAIN_INDUSTRY, default=1 )
     specific_industry = models.IntegerField( choices=SPECIFIC_INDUSTRY, default=1 )
-    phone = models.CharField(max_length=255) 
-    fax = models.CharField(max_length=255) 
+    phone = models.CharField(max_length=255)
+    fax = models.CharField(max_length=255)
     email = models.EmailField()
 
     contact_person = models.CharField(max_length=255, blank=True, null=True,)
@@ -71,13 +85,26 @@ class Company(models.Model):
     twitter = models.CharField(max_length=255, blank=True, null=True )
     logo = models.ImageField(upload_to='itpdirectory_company_logo',null=True,blank=True)
 
-    status = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+    state = models.IntegerField( choices=COMPANY_STATUS, default=1 )
+
     type = MultipleChoiceField( widget=CheckboxSelectMultiple, choices=COMPANY_TYPES )
     is_active = models.BooleanField()
    
     directory = models.ManyToManyField( Directory, null=True, blank=True, through="ManyDirectoryCompany", symmetrical=False, related_name='in_directories' )
     company = models.ManyToManyField( "self" , null=True, blank=True, through="ManyCompanyCompany", symmetrical=False, related_name='related_company' )
     brand = models.ManyToManyField( Brand, null=True, blank=True ) #, through="ManyBrandCompany" )
+
+    class Meta:
+        verbose_name_plural = "Companies"
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    def get_thumbnail(self):
+        return None
+        # i needs a logo
+        #return self.image.url
 
     #location field
     lng = models.FloatField(verbose_name='latitude', blank=True, null=True, help_text="Please mark your location on the map below" )
@@ -119,6 +146,7 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = "Companies"
 
+
 class CompanyTranslation(models.Model):
     company = models.ForeignKey( Company )
     name = models.CharField(max_length=255)
@@ -159,7 +187,6 @@ class PersonBio(models.Model):
         return "%s" % ( self.name )
 
 
-
 class ManyCompanyPerson(models.Model):
     company = models.ForeignKey( Company )
     biography = models.ForeignKey( PersonBio )
@@ -177,24 +204,18 @@ class ManyDirectoryCompany(models.Model):
     category = models.ForeignKey( Category, related_name="directory_company_category" )
     subcategory = models.ForeignKey( Category, related_name="directory_company_sub_category" )
 
-#class ManyCompanyCategory(models.Model):
-#    company = models.ForeignKey( Company )
-#    category = models.ForeignKey(Category)
-    
-#class ManyCategoryPerson(models.Model):
-#    category = models.ForeignKey(Category)
-#    person = models.ForeignKey( Person )
-#    relation = models.IntegerField( choices=CATEGORY_PERSON_RELATION, default=1 )
-    
+    class Meta:
+        verbose_name_plural = "Directories"
+
 
 class ManyCompanyCompany(models.Model):
-    child = models.ForeignKey( Company, null=True, blank=True, related_name='child' )
-    parent = models.ForeignKey( Company, null=True, blank=True, related_name='parent' )
+    company = models.ForeignKey( Company, null=True, blank=True, related_name='related_from' )
+    related_to = models.ForeignKey( Company, null=True, blank=True, related_name='related_to' )
     relation = models.IntegerField( choices=COMPANY_COMPANY_RELATION, default=1 )
-    
-#class ManyBrandCompany(models.Model):
-#    brand = models.ForeignKey( Brand )
-#    company = models.ForeignKey( Company )
-#    relation = models.IntegerField( choices=BRAND_COMPANY_RELATION, default=1 )
+
+    class Meta:
+        verbose_name_plural = "Company Relations"
+        unique_together = ('company', 'related_to',)
+
 
     

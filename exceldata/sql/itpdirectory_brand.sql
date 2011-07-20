@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `itpdirectory_brand`;
 CREATE TABLE `itpdirectory_brand` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `state` SMALLINT(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -35,7 +36,7 @@ CREATE TABLE `itpdirectory_brand` (
 
 LOCK TABLES `itpdirectory_brand` WRITE;
 /*!40000 ALTER TABLE `itpdirectory_brand` DISABLE KEYS */;
-INSERT INTO `itpdirectory_brand` VALUES (4,'Apple'),(3,'Acer'),(5,'Aspire'),(6,'Asus'),(7,'BenQ'),(8,'Blackberry'),(9,'Compaq'),(10,'Dell'),(11,'Fujitsu'),(12,'HCL'),(13,'HP'),(14,'HTC'),(15,'IBM'),(16,'iPhone'),(17,'Lanix'),(18,'Lenovo'),(19,'LG'),(20,'Micro-Star International'),(21,'Motorolla'),(22,'MSI'),(23,'Nexus'),(24,'Nokia'),(25,'Panasonic'),(26,'Samsung'),(27,'Sony'),(28,'Toshiba');
+INSERT INTO `itpdirectory_brand` VALUES (4,'Apple',1),(3,'Acer',1),(5,'Aspire',1),(6,'Asus',1),(7,'BenQ',1),(8,'Blackberry',1),(9,'Compaq',1),(10,'Dell',1),(11,'Fujitsu',1),(12,'HCL',1),(13,'HP',1),(14,'HTC',1),(15,'IBM',1),(16,'iPhone',1),(17,'Lanix',1),(18,'Lenovo',1),(19,'LG',1),(20,'Micro-Star International',1),(21,'Motorolla',1),(22,'MSI',1),(23,'Nexus',1),(24,'Nokia',1),(25,'Panasonic',1),(26,'Samsung',1),(27,'Sony',1),(28,'Toshiba',1);
 /*!40000 ALTER TABLE `itpdirectory_brand` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
