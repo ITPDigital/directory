@@ -115,16 +115,16 @@ class Company(models.Model):
         return self.title
 
     def person_link(self):
-        return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_person_add" ) , self.id  )
+        return '<a href="%s?company=%s"> Add </a>' % ( reverse("admin:itpdirectory_personbio_add" ) , self.id  )
 
     person_link.allow_tags = True
     person_link.short_description = "Key Person" 
 
     def persons(self):
-        people = self.person_set.all()
+        people = self.personbio_set.all()
         string = ""
         for person in people:
-            single = '<a href="%s"> %s </a> <br/>' % ( reverse("admin:itpdirectory_person_change", args=( person.id, ) ) , person  )
+            single = '<a href="%s"> %s </a> <br/>' % ( reverse("admin:itpdirectory_personbio_change", args=( person.id, ) ) , person  )
             string = "%s %s" % ( string, single ) 
 
         return string
