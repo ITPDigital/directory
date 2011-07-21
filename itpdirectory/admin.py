@@ -86,7 +86,7 @@ class CompanyAdminForm(forms.ModelForm):
 
 
 class CompanyAdmin(FkAutocompleteAdmin):
-    list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons',  )
+    list_display = ( 'title', 'country', 'city', 'main_industry', 'specific_industry', 'person_link', 'persons', 'branch_link',  )
     list_filter = ( 'state', 'is_active', 'main_industry', 'city'  )
     ordering       = ( 'title', )
     search_fields = ('title',)

@@ -7,6 +7,8 @@ from django.core.mail import mail_managers
 from django.forms.fields import MultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
 from django.conf import settings
+from django.utils.dateformat import format
+from datetime import datetime
 
 class Year(models.Model):
     name = models.CharField(max_length=255)
@@ -131,6 +133,16 @@ class Company(models.Model):
 
     persons.allow_tags = True
     persons.short_description = "Existing Key Person" 
+
+
+    def branch_link(self):
+        return '<a href="%s?pass=%s&company=%s"> Add </a>' %(   ( reverse("admin:itpdirectory_company_add" ) ,  format(datetime.now(), u'U'),  self.id  ) )
+
+    branch_link.allow_tags = True
+    branch_link.short_description = "Branch" 
+
+
+
 
     def save(self, *args, **kwargs):
         email = True if not self.id else False
