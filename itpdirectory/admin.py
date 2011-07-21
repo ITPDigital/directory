@@ -9,6 +9,7 @@ from django.contrib.admin.models import LogEntry, DELETION
 from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django import forms
+from django.utils.dateformat import format
 
 from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField, ManyToManyByRelatedField
 
@@ -119,10 +120,11 @@ class CompanyAdmin(FkAutocompleteAdmin):
 
         return super(CompanyAdmin, self).add_view(request, extra_context=extra_context)
 
-    def changelist_view(self, request, extra_context=None):
-        from django.utils.dateformat import format
-        if not extra_context: extra_context = {}
+    def change_view(self, request, object_id, extra_context={}):
+        extra_context.update( { 'add_stamp' : format(datetime.now(), u'U') } )
+        return super(CompanyAdmin, self).change_view(request,object_id, extra_context)
 
+    def changelist_view(self, request, extra_context={}):
         extra_context.update( { 'add_stamp' : format(datetime.now(), u'U') } )
         return super(CompanyAdmin, self).changelist_view(request, extra_context)
 
