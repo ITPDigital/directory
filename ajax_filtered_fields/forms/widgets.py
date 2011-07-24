@@ -87,7 +87,7 @@ class FilteredSelectMultiple(forms.SelectMultiple):
                     });
                 });
             </script>
-            <a href="/admin/itpdirectory/%s/add/" class="add-another" id="add_%s" onclick="return showAddAnotherPopup(this);"> <img src="%s/img/admin/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
+            <a href="/admin/%s/%s/add/" class="add-another" id="add_%s" onclick="return showAddAnotherPopup(this);"> <img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
         """ % (lookups_output, parent_output,
                 name, verbose_name, settings.ADMIN_MEDIA_PREFIX,
                 element_id, js_method_name, element_id, self.model._meta.app_label, model_name,
@@ -122,21 +122,21 @@ class FilteredSelect(forms.Select):
         if len(lookups) > 1:
             js_method_name = "getForeignKeyJSON"
             lookups_output = "\n".join(
-               _renderFilter(js_method_name, self._element_id,
-                    self.model, i, self.select_related)
+                _renderFilter(js_method_name, self._element_id, 
+                    self.model, i, self.select_related) 
                 for i in lookups)
-
+                
         # get the selected object name
         selection = "-" * 9
         if value:
             selection = utils.getObject(self.model, {"pk": value}, 
                 self.select_related)
-
+        
         # filter selectbox input
         filter_id = "%s_input" % self._element_id
         
         # give a style to the final select widget
-        _attrs = {"size": 1, "style": "width:270px"}
+        _attrs = {"size": 2, "style": "width:270px;"}
         try:
             attrs.update(_attrs)
         except AttributeError:
@@ -161,15 +161,15 @@ class FilteredSelect(forms.Select):
             }
                             
         output = u"""
-            <!-- <div class="selector">
+            <div class="selector">
                 %(lookups_output)s
-            </div>--<
+            </div>
             
             <div class="selector">
                 <div class="selector-available">
                     <h2>%(selection)s</h2>
                     <!-- <p class="selector-filter">
-                        <img src="%(media_prefix)s/img/admin/selector-search.gif">
+                        <img src="%(media_prefix)simg/admin/selector-search.gif">
                         <input id="%(filter_id)s" type="text">
                     </p>-->
                     %(parent_output)s
