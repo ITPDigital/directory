@@ -1,6 +1,6 @@
 from django.db import models
 from itpdirectory import COMPANY_PERSON_RELATION,  COMPANY_COMPANY_RELATION, BRAND_COMPANY_RELATION, MAIN_INDUSTRY, SPECIFIC_INDUSTRY, PERSON_JOB_FUNCTION, COMPANY_TYPES, COMPANY_STATUS, STATE_TYPES, SALUTATIONS
-from itputils import LANGUAGES, COUNTRIES
+from itputils import LANGUAGES, COUNTRIES, CITIES
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.core.mail import mail_managers
@@ -102,6 +102,15 @@ class Company(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def city_value(self):
+        try:
+            city_id = int(self.city)
+            res = [ item[1] for item in CITIES if item[0] == city_id ] 
+            return res[0]
+        except:
+            return self.city
 
     def get_thumbnail(self):
         return None
