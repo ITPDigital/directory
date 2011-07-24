@@ -162,9 +162,9 @@ class Company(models.Model):
 class CompanyTranslation(models.Model):
     company = models.ForeignKey( Company )
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    address_2 = models.CharField(max_length=255)
-    area = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    address_2 = models.CharField(max_length=255 , blank=True, null=True )
+    area = models.CharField(max_length=255, blank=True, null=True )
     directory = models.ManyToManyField( Directory  ) 
     use_for_print = models.BooleanField()
     language = models.IntegerField( choices=LANGUAGES, default=1 )
