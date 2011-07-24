@@ -1,5 +1,5 @@
 from django.contrib import admin
-from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, CompanyTranslation, Person, PersonBio, ManyCompanyPerson, ManyCompanyCompany, ManyDirectoryCompany 
+from itpdirectory.models import Year, Directory, Magazine, Category, Brand, Company, CompanyTranslation, Person, PersonBio, ManyCompanyPersonBio, ManyCompanyCompany, ManyDirectoryCompany 
 import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -32,8 +32,8 @@ class ManyDirectoryCompanyInline(admin.TabularInline):
     template = "admin/itpdirectory/company/tabular.html"
 
 
-class ManyCompanyPersonInline(admin.TabularInline):
-    model =  ManyCompanyPerson
+class ManyCompanyPersonBioInline(admin.TabularInline):
+    model =  ManyCompanyPersonBio
     extra = 1    
 
 
@@ -51,7 +51,7 @@ class CompanyTranslationInline(admin.TabularInline):
 class PersonBioAdmin(admin.ModelAdmin):
     list_display = ( '__unicode__' , 'nationality' , 'job_title' , 'job_function'  )
     list_filter = ( 'job_function', 'job_title' )
-    inlines = ( ManyCompanyPersonInline,  )
+    inlines = ( ManyCompanyPersonBioInline,  )
     search_fields = ('name','title', )
 
     class Media:

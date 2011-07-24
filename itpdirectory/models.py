@@ -193,7 +193,7 @@ class PersonBio(models.Model):
     nationality = models.CharField( choices=COUNTRIES, max_length=5, null=True, blank=True  )
     residence = models.CharField( choices=COUNTRIES, verbose_name="Residing in", max_length=5, null=True, blank=True )
     email = models.EmailField(max_length=75, null=True, blank=True )
-    company = models.ManyToManyField( Company, through='ManyCompanyPerson', null=True, blank=True)
+    company = models.ManyToManyField( Company, through='ManyCompanyPersonBio', null=True, blank=True)
     biography = models.TextField( null=True, blank=True )
     language = models.IntegerField( choices=LANGUAGES, default=0 )
 
@@ -206,17 +206,17 @@ class PersonBio(models.Model):
         db_table = 'itpdirectory_person_bio'
 
 
-class ManyCompanyPerson(models.Model):
+class ManyCompanyPersonBio(models.Model):
     company = models.ForeignKey( Company )
     biography = models.ForeignKey( PersonBio )
     relation = models.IntegerField( choices=COMPANY_PERSON_RELATION, default=1 )
     directory = models.ManyToManyField( Directory  )
 
     def __unicode__(self):
-        return mark_safe( "%s - %s" % ( self.company, self.person )  )
+        return mark_safe( "%s - %s" % ( self.company, self.biography.title )  )
 
     class Meta:
-        db_table = 'itpdirectory_company_person'
+        db_table = 'itpdirectory_company_personbio'
 
 
 class ManyDirectoryCompany(models.Model):
