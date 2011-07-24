@@ -60,6 +60,7 @@ class AjaxManyToManyField(forms.ModelMultipleChoiceField):
         self.widget.lookups = self.lookups = lookups
         self.widget.model = self.model = model
         self.widget.select_related = select_related
+        self.widget.field_name = self.field_name
         
     def clean(self, value):
         if self.required and not value:
@@ -109,7 +110,8 @@ class AjaxForeignKeyField(forms.ModelChoiceField):
         self.widget.lookups = self.lookups = lookups
         self.widget.model = self.model = model
         self.widget.select_related = select_related
-        
+        self.widget.field_name = self.field_name
+
     def clean(self, value):
         forms.Field.clean(self, value)
         if value in forms.fields.EMPTY_VALUES:
@@ -153,6 +155,8 @@ def _byLetterFactory(parent):
             # other non-letter records
             regex_lookup_key = "%s__iregex" % field_name
             lookups.append((_('other'), {regex_lookup_key: "^[^a-z]"}))
+
+            self.field_name = field_name
         
             super(ByLetter, self).__init__(model, lookups, *args, **kwargs)
     return ByLetter
@@ -186,6 +190,9 @@ def _byStatusFactory(parent):
                 (_('inactive'), {field_name: False}),
                 (_('all'), {}),
                 )
+
+            self.field_name = field_name
+
             super(ByStatus, self).__init__(model, lookups, *args, **kwargs)
     return ByStatus
     
@@ -234,6 +241,8 @@ def _byRelatedFieldFactory(parent):
                 # add the all objects lookup
                 lookups_.append((_('all'), {}))
                 return lookups_
+
+            self.field_name = field_name
 
             super(ByRelatedField, self).__init__(model, lookups, *args, **kwargs)
     return ByRelatedField
