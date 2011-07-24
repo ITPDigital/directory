@@ -18,3 +18,14 @@ def country_city_ajax_servant(request):
     return HttpResponse( "Awkward request!" )
 
 
+def city_value_ajax_servant(request):
+        """return city name from id"""
+        try:
+            city_id = int(request.GET.get("city_id")  )
+            res = [ item[1] for item in CITIES if item[0] == city_id ] 
+            ret = { 'value' : res }
+            return HttpResponse(simplejson.dumps( ret ), content_type="application/json")
+        except:
+            return HttpResponse( "Get Outta Here!" )
+
+

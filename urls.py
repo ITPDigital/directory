@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 
     #ajax stuff
+    (r'^ajax/client/simple_city$', 'itputils.views.city_value_ajax_servant'),
     (r'^ajax/client/country$', 'itputils.views.country_city_ajax_servant'),
     (r'^ajax/client/industry$', 'itpdirectory.views.industry_ajax_servant'),
     (r'^ajax/client/company_directory_many$', 'itpdirectory.views.company_directory_many_ajax_servant'),
