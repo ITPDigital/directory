@@ -10,10 +10,48 @@ from django.utils.html import escape
 from django.core.urlresolvers import reverse
 from django import forms
 from django.utils.dateformat import format
+from django.contrib.localflavor.us.forms import USPhoneNumberField, phone_digits_re
+from django.utils.encoding import smart_unicode
+from django.forms.fields import EMPTY_VALUES
+import re
 
 from ajax_filtered_fields.forms import ManyToManyByLetter, ForeignKeyByRelatedField, ManyToManyByRelatedField
 
 from itputils.autocomplete_admin import FkAutocompleteAdmin, InlineAutocompleteAdmin
+
+phone_digits_re = re.compile(r'^(\d{3})\s(\d{1,2})\s(\d{7})$')
+
+class PhoneNumberMultiWidget(forms.MultiWidget):
+    """
+    A Widget that splits US Phone number input into three  boxes.
+    """
+    def __init__(self, attrs=None):
+        widgets = (
+            forms.TextInput(attrs={'size':'3','maxlength':'3', 'class':'phone', 'style': 'margin-right:5px',}),
+            forms.TextInput(attrs={'size':'2','maxlength':'2', 'class':'phone', 'style': 'margin-right:5px',}),
+            forms.TextInput(attrs={'size':'7','maxlength':'7', 'class':'phone', 'style': 'margin-right:5px',}),
+        )
+        super(PhoneNumberMultiWidget, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return value.split(' ')
+        return [None,None,None]
+
+    def value_from_datadict(self, data, files, name):
+        values = tuple(super(PhoneNumberMultiWidget, self).value_from_datadict(data, files, name))
+        return u'%s %s %s' % values
+
+
+class PhoneNumberField(USPhoneNumberField):
+    def clean(self, value):
+        if value in EMPTY_VALUES:
+            return u''
+        m = phone_digits_re.search(value)
+        if m:
+            print u'%s %s %s' % (m.group(1), m.group(2), m.group(3))
+            return u'%s %s %s' % (m.group(1), m.group(2), m.group(3))
+        raise forms.ValidationError("Phone numbers must be in 'int(3) local(1,2) number(7)' format and contain only numbers.")
 
 
 class ManyDirectoryCompanyForm(forms.ModelForm):
@@ -67,6 +105,9 @@ class PersonBioAdmin(admin.ModelAdmin):
 
 class CompanyAdminForm(forms.ModelForm):
     brand = ManyToManyByLetter(Brand, field_name="name", required=False,)
+    phone = PhoneNumberField(label="Phone", widget=PhoneNumberMultiWidget())
+    fax = PhoneNumberField(label="Fax", widget=PhoneNumberMultiWidget())
+    contact_person_mobile = PhoneNumberField(label="Contact person mobile:", widget=PhoneNumberMultiWidget())
 
     class Meta:
         model = Company

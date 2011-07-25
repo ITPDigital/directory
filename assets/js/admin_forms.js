@@ -35,10 +35,6 @@ function getParameterByName(name)
         fill_less(  '/ajax/client/country?country='+ $("#id_country").val()+'&ask=choices' , "id_city" );
     }
 
-    if(jQuery("#id_phone").attr('id') != 'undefined') jQuery("#id_phone").mask('?999 99 9999999');
-    if(jQuery("#id_fax").attr('id') != 'undefined') jQuery("#id_fax").mask('?999 99 9999999');
-    if(jQuery("#id_contact_person_mobile").attr('id') != 'undefined')  jQuery("#id_contact_person_mobile").mask('?999 99 9999999');
-
  });
 })(django.jQuery);
 
