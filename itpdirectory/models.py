@@ -82,7 +82,7 @@ class Company(models.Model):
     contact_person = models.CharField(max_length=255, blank=True, null=True,)
     contact_person_mobile = models.CharField(max_length=255, blank=True, null=True,)
 
-    url = models.URLField( verify_exists=True, blank=True, null=True )
+    url = models.URLField(  blank=True, null=True )
     facebook = models.CharField( max_length=255, blank=True, null=True )
     twitter = models.CharField(max_length=255, blank=True, null=True )
     logo = models.ImageField(upload_to='itpdirectory_company_logo',null=True,blank=True)
